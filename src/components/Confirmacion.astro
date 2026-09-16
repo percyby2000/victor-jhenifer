@@ -1,0 +1,415 @@
+---
+const whatsappNumber = '51913882945';
+const whatsappMessage = encodeURIComponent('Hola, queremos confirmar nuestra asistencia a la boda de Victor y Jhenifer. Nos alegra mucho compartir este día tan especial con ustedes. ¡Un abrazo!');
+---
+
+<section class="confirmation" aria-labelledby="confirmation-title">
+	<div class="confirmation-content">
+		<h2 id="confirmation-title">Confirmaci&oacute;n de asistencia</h2>
+		<p>Es importante que confirmes tu asistencia</p>
+		<a class="confirmation-button" href={`https://wa.me/${whatsappNumber}?text=${whatsappMessage}`} target="_blank" rel="noreferrer">Confirmar por WhatsApp</a>
+	</div>
+
+	<dialog class="confirmation-modal" data-confirmation-modal aria-labelledby="modal-title">
+		<div class="modal-content">
+			<button class="modal-close" type="button" data-close-confirmation aria-label="Cerrar ventana">&times;</button>
+			<p class="modal-kicker">Tu respuesta</p>
+			<h3 id="modal-title">&iquest;C&oacute;mo deseas confirmar?</h3>
+			<p class="modal-intro">Elige la opci&oacute;n que te resulte m&aacute;s c&oacute;moda.</p>
+
+			<a
+				class="modal-option modal-whatsapp"
+				href={`https://wa.me/${whatsappNumber}?text=Hola%2C%20quiero%20confirmar%20mi%20asistencia%20a%20la%20boda%20de%20Victor%20y%20Jhenifer.`}
+				target="_blank"
+				rel="noreferrer"
+			>
+				<strong>Confirmar por WhatsApp</strong>
+				<span>Enviar un mensaje directamente</span>
+			</a>
+
+			<form class="confirmation-form" data-confirmation-form>
+				<h4>Responder con formulario</h4>
+				<label>Nombre completo <input name="nombre" type="text" required /></label>
+				<label>Asistencia
+					<select name="asistencia" required>
+						<option value="">Selecciona una opci&oacute;n</option>
+						<option value="Si asistir&eacute;">S&iacute;, asistir&eacute;</option>
+						<option value="No podr&eacute; asistir">No podr&eacute; asistir</option>
+					</select>
+				</label>
+				<label>N&uacute;mero de acompa&ntilde;antes <input name="acompanantes" type="number" min="0" max="10" value="0" required /></label>
+				<button class="form-submit" type="submit">Enviar confirmaci&oacute;n</button>
+			</form>
+		</div>
+	</dialog>
+
+
+</section>
+
+<script>
+	const confirmation = document.querySelector<HTMLElement>('.confirmation');
+	const confirmationContent = confirmation?.querySelector<HTMLElement>('.confirmation-content');
+	const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	const modal = confirmation?.querySelector<HTMLDialogElement>('[data-confirmation-modal]');
+	const openButton = confirmation?.querySelector<HTMLButtonElement>('[data-open-confirmation]');
+	const closeButton = confirmation?.querySelector<HTMLButtonElement>('[data-close-confirmation]');
+	const confirmationForm = confirmation?.querySelector<HTMLFormElement>('[data-confirmation-form]');
+
+	openButton?.addEventListener('click', () => modal?.showModal());
+	closeButton?.addEventListener('click', () => modal?.close());
+	modal?.addEventListener('click', (event) => {
+		if (event.target === modal) modal.close();
+	});
+	confirmationForm?.addEventListener('submit', (event) => {
+		event.preventDefault();
+		const formData = new FormData(confirmationForm);
+		const subject = encodeURIComponent('Confirmación de asistencia');
+		const body = encodeURIComponent([
+			`Nombre: ${formData.get('nombre')}`,
+			`Asistencia: ${formData.get('asistencia')}`,
+			`Acompañantes: ${formData.get('acompanantes')}`,
+		].join('\n'));
+		window.location.href = `mailto:confirmacion@victoryjhenifer.com?subject=${subject}&body=${body}`;
+		modal?.close();
+	});
+
+	if (confirmation && !reducedMotion) {
+		let frame = 0;
+		const updateScrollMotion = () => {
+			frame = 0;
+			const bounds = confirmation.getBoundingClientRect();
+			const progress = (window.innerHeight - bounds.top) / (window.innerHeight + bounds.height);
+			const offset = Math.max(-1, Math.min(1, progress * 2 - 1));
+			confirmation.style.setProperty('--flower-shift', `${offset * 2.2}rem`);
+			confirmation.style.setProperty('--flower-tilt', `${offset * -2.5}deg`);
+			confirmation.style.setProperty('--flower-depth', `${1.02 + Math.abs(offset) * .035}`);
+			confirmation.style.setProperty('--content-shift', `${offset * -1.1}rem`);
+		};
+
+		const onScroll = () => {
+			if (!frame) frame = window.requestAnimationFrame(updateScrollMotion);
+		};
+
+		window.addEventListener('scroll', onScroll, { passive: true });
+		updateScrollMotion();
+
+		if (confirmationContent && 'IntersectionObserver' in window) {
+			const observer = new IntersectionObserver(([entry]) => {
+				if (entry.isIntersecting) {
+					confirmation.classList.add('is-visible');
+					observer.disconnect();
+				}
+			}, { threshold: .2 });
+			observer.observe(confirmationContent);
+		} else {
+			confirmation.classList.add('is-visible');
+		}
+	}
+</script>
+
+<style>
+	.confirmation {
+		position: relative;
+		box-sizing: border-box;
+		min-height: 34rem;
+		overflow: hidden;
+		background: #DAE8F1;
+		color: #04294A;
+		font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+		text-align: center;
+		--flower-shift: 0rem;
+		--flower-tilt: 0deg;
+		--flower-depth: 1.02;
+		--content-shift: 0rem;
+		perspective: 1200px;
+	}
+
+	.floral-separator {
+		position: relative;
+		display: block;
+		width: 100%;
+		height: auto;
+		max-height: none;
+		object-fit: contain;
+		object-position: center;
+		will-change: transform;
+		filter: drop-shadow(0 .8rem .55rem rgba(4, 41, 74, .22));
+		transition: filter .6s ease;
+		backface-visibility: hidden;
+	}
+
+	.floral-separator-top {
+		z-index: 3;
+		margin-bottom: -3.25rem;
+		transform: translate3d(0, var(--flower-shift), 0) rotateX(var(--flower-tilt)) scale(var(--flower-depth));
+		transform-origin: center top;
+	}
+
+	.floral-separator-bottom {
+		z-index: 2;
+		transform: translate3d(0, calc(var(--flower-shift) * -1), 0) rotateX(calc(var(--flower-tilt) * -1)) scale(var(--flower-depth));
+		transform-origin: center bottom;
+	}
+
+	.floral-separator-top {
+		margin-top: 0;
+	}
+
+	.floral-separator-bottom {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+	}
+
+	.confirmation-content {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		min-height: 19rem;
+		align-items: center;
+		flex-direction: column;
+		justify-content: center;
+		padding: 2rem 1.25rem 8rem;
+		opacity: 0;
+		transform: translateY(calc(1.5rem + var(--content-shift)));
+		transition: opacity .9s ease, transform 1s cubic-bezier(.2, .75, .25, 1);
+	}
+
+	.confirmation.is-visible .confirmation-content {
+		opacity: 1;
+		transform: translateY(var(--content-shift));
+	}
+
+	.confirmation h2 {
+		margin: 0;
+		color: #04294A;
+		font-family: 'Cormorant Garamond', Georgia, serif;
+		font-size: clamp(2.5rem, 5vw, 4.4rem);
+		font-weight: 500;
+		line-height: 1;
+	}
+
+	.confirmation p {
+		margin: .55rem 0 1.5rem;
+		color: #376282;
+		font-size: clamp(1rem, 2vw, 1.35rem);
+		font-weight: 400;
+	}
+
+	.confirmation-button {
+		display: inline-block;
+		min-width: 15rem;
+		padding: .9rem 1.5rem;
+		border-radius: .65rem;
+		background: #04294A;
+		color: #FFFFFF;
+		font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+		font-size: 1.05rem;
+		font-weight: 500;
+		text-decoration: none;
+		transition: background-color .25s ease, transform .25s ease, box-shadow .25s ease;
+	}
+
+	.confirmation-button:hover,
+	.confirmation-button:focus-visible {
+		background: #376282;
+		box-shadow: 0 .45rem 1rem rgba(4, 41, 74, .18);
+		transform: translateY(-2px);
+	}
+
+	.confirmation-modal {
+		width: min(34rem, calc(100% - 2rem));
+		max-height: 92dvh;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		color: #04294A;
+		overflow: hidden;
+	}
+
+	.confirmation-modal::backdrop {
+		background: rgba(4, 41, 74, .58);
+		backdrop-filter: blur(4px);
+	}
+
+	.modal-content {
+		position: relative;
+		max-height: 92dvh;
+		overflow-y: auto;
+		padding: clamp(1.35rem, 4vw, 2rem) clamp(1.25rem, 4vw, 2.25rem) 1.5rem;
+		border: 1px solid rgba(55, 98, 130, .2);
+		background: #fff;
+		box-shadow: 0 1rem 3rem rgba(4, 41, 74, .25);
+		scrollbar-width: thin;
+		scrollbar-color: #9eb6c5 transparent;
+	}
+
+	.modal-close {
+		position: absolute;
+		top: .65rem;
+		right: .75rem;
+		width: 2rem;
+		height: 2rem;
+		border: 0;
+		background: transparent;
+		color: #376282;
+		font-size: 1.7rem;
+		line-height: 1;
+		cursor: pointer;
+	}
+
+	.modal-kicker {
+		margin: 0 0 .5rem;
+		color: #9b6b4a;
+		font-size: .7rem;
+		letter-spacing: .16em;
+		text-transform: uppercase;
+	}
+
+	.confirmation-modal h3 {
+		margin: 0;
+		font-family: 'Cormorant Garamond', Georgia, serif;
+		font-size: clamp(1.9rem, 6vw, 2.8rem);
+		font-weight: 500;
+		line-height: .98;
+	}
+
+	.modal-intro {
+		margin: .5rem 0 1rem;
+		font-size: .95rem;
+}
+
+	.modal-option {
+		display: flex;
+		flex-direction: column;
+		gap: .2rem;
+		margin-bottom: 1rem;
+		padding: .85rem 1rem;
+		border: 1px solid #cbdde8;
+		color: #fff;
+		text-decoration: none;
+		transition: transform .2s ease, box-shadow .2s ease;
+	}
+
+	.modal-option:hover,
+	.modal-option:focus-visible {
+		box-shadow: 0 .4rem 1rem rgba(4, 41, 74, .16);
+		transform: translateY(-2px);
+	}
+
+	.modal-whatsapp { background: #287d58; }
+	.modal-option strong { font-size: 1rem; }
+	.modal-option span { font-size: .8rem; opacity: .85; }
+
+	.confirmation-form {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: .8rem;
+		padding-top: 1rem;
+		border-top: 1px solid #dae8f1;
+	}
+
+	.confirmation-form h4 {
+		grid-column: 1 / -1;
+		margin: 0 0 .2rem;
+		font-family: 'Cormorant Garamond', Georgia, serif;
+		font-size: 1.7rem;
+		font-weight: 500;
+	}
+
+	.confirmation-form label {
+		display: grid;
+		gap: .3rem;
+		color: #376282;
+		font-size: .8rem;
+	}
+
+	.confirmation-form label:first-of-type { grid-column: 1 / -1; }
+
+	.confirmation-form input,
+	.confirmation-form select {
+		box-sizing: border-box;
+		width: 100%;
+		padding: .7rem .75rem;
+		border: 1px solid #bfd2df;
+		border-radius: .25rem;
+		background: #f8fbfd;
+		color: #04294A;
+		font: inherit;
+	}
+
+	.form-submit {
+		grid-column: 1 / -1;
+		margin-top: .4rem;
+		padding: .8rem 1rem;
+		border: 0;
+		background: #04294A;
+		color: #fff;
+		font: inherit;
+		cursor: pointer;
+	}
+
+	.form-submit:hover,
+	.form-submit:focus-visible { background: #376282; }
+
+	@media (max-width: 520px) {
+		.confirmation-modal,
+		.modal-content {
+			max-height: 94dvh;
+		}
+
+		.confirmation-form { grid-template-columns: 1fr; }
+		.confirmation-form label:first-of-type,
+		.form-submit { grid-column: auto; }
+	}
+
+	@media (max-width: 600px) {
+		.confirmation {
+			min-height: 27rem;
+		}
+
+		.floral-separator {
+			width: 150%;
+			max-width: none;
+			height: auto;
+			max-height: none;
+			margin-left: -16.666%;
+		}
+
+		.floral-separator-top {
+			margin-bottom: -2rem;
+		}
+
+		.confirmation-content {
+			min-height: 15rem;
+			padding: 1.5rem 1rem 6rem;
+		}
+
+		.confirmation h2 {
+			font-size: clamp(2.25rem, 10vw, 3.4rem);
+		}
+
+		.confirmation p {
+			font-size: .95rem;
+		}
+
+		.confirmation-button {
+			min-width: min(15rem, 90vw);
+			font-size: .95rem;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.confirmation-content {
+			opacity: 1;
+			transform: none;
+			transition: none;
+		}
+
+		.floral-separator,
+		.confirmation-button {
+			transition: none;
+			animation: none;
+		}
+	}
+</style>

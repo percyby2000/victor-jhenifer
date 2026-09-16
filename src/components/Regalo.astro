@@ -1,0 +1,170 @@
+<section class="gift-section" aria-labelledby="gift-title">
+	<div class="gift-wash" aria-hidden="true"></div>
+	<div class="gift-content">
+		<h2 id="gift-title">Regalo</h2>
+		<img class="gift-icon" src="/iconos/svgexport-10.svg" alt="" aria-hidden="true" />
+		<p class="gift-message">
+			Nuestro mejor regalo es que est&eacute;s con nosotros <br class="desktop-break" />
+			 en nuestro d&iacute;a, pero si quer&eacute;is hacernos un <br class="desktop-break" />
+			 obsequio, &iexcl;aqu&iacute; est&aacute; nuestro n&uacute;mero de cuenta!
+		</p>
+		<p class="account-holder">Victor Raul Berrocal Avalos</p>
+		<button class="account-number" type="button" data-copy-account data-account="00344001335827058453" aria-label="Copiar n&uacute;mero de cuenta">
+			<span class="account-number-value">0034 4001 3358 2705 8453</span>
+		</button>
+
+		<p class="copy-feedback" aria-live="polite"></p>
+	</div>
+</section>
+
+<script>
+	const accountButton = document.querySelector<HTMLButtonElement>('[data-copy-account]');
+	const copyFeedback = document.querySelector<HTMLElement>('.copy-feedback');
+
+	accountButton?.addEventListener('click', async () => {
+		const account = accountButton.dataset.account ?? '';
+
+		try {
+			await navigator.clipboard.writeText(account);
+			if (copyFeedback) copyFeedback.textContent = 'N\u00FAmero copiado';
+		} catch {
+			if (copyFeedback) copyFeedback.textContent = 'Selecciona el n\u00FAmero para copiarlo';
+		}
+
+		window.setTimeout(() => {
+			if (copyFeedback) copyFeedback.textContent = '';
+		}, 2200);
+	});
+</script>
+
+<style>
+	@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Meddon&family=Montserrat:wght@300;400&display=swap');
+
+	.gift-section {
+		position: relative;
+		display: grid;
+		min-height: min(48rem, 100svh);
+		place-items: center;
+		overflow: hidden;
+		background: #fff;
+		color: #24333c;
+		font-family: 'Cormorant Garamond', Georgia, serif;
+		text-align: center;
+	}
+
+	.gift-wash {
+		position: absolute;
+		inset: 9% 11% 5%;
+		z-index: 0;
+		background: #edf7fc;
+		border-radius: 48% 52% 45% 55% / 46% 42% 58% 54%;
+		box-shadow: 0 0 4rem rgba(190, 220, 233, .45);
+		transform: rotate(-3deg);
+	}
+
+	.gift-content {
+		position: relative;
+		z-index: 1;
+		width: min(100% - 2rem, 42rem);
+		padding: 3rem 1rem 3.5rem;
+	}
+
+	.gift-content h2 {
+		margin: 0 0 .5rem;
+		color: #182c3a;
+		font-family: 'Meddon', 'Brush Script MT', cursive;
+		font-size: clamp(3.2rem, 9vw, 5.7rem);
+		font-weight: 400;
+		line-height: 1;
+	}
+
+	.gift-icon {
+		display: block;
+		width: clamp(5.5rem, 18vw, 8rem);
+		height: clamp(5.5rem, 18vw, 8rem);
+		margin: 1rem auto 1.2rem;
+		object-fit: contain;
+		filter: saturate(.75) brightness(1.05);
+	}
+
+	.gift-message {
+		margin: 0 auto;
+		color: #303d45;
+		font-size: clamp(1.35rem, 2.6vw, 1.9rem);
+		line-height: 1.28;
+	}
+
+	.account-holder {
+		margin: 1.5rem 0 .35rem;
+		font-size: clamp(1.4rem, 3vw, 1.9rem);
+		font-weight: 600;
+	}
+
+	.account-number {
+		display: inline-flex;
+		align-items: center;
+		gap: .55rem;
+		padding: .25rem .4rem;
+		border: 0;
+		background: transparent;
+		color: #1670a8;
+		font-family: 'Montserrat', Arial, sans-serif;
+		font-size: clamp(.95rem, 2.2vw, 1.3rem);
+		font-weight: 300;
+		letter-spacing: .08em;
+		font-variant-numeric: tabular-nums;
+		cursor: pointer;
+	}
+
+	.account-number-value {
+		white-space: nowrap;
+	}
+
+	.account-number:hover,
+	.account-number:focus-visible {
+		color: #0d456a;
+		text-decoration: underline;
+	}
+
+	.copy-icon {
+		font-family: sans-serif;
+		font-size: 1.4rem;
+	}
+
+	.copy-feedback {
+		min-height: 1.3em;
+		margin: .25rem 0 0;
+		color: #1670a8;
+		font-family: sans-serif;
+		font-size: .75rem;
+	}
+
+	@media (max-width: 600px) {
+		.gift-section {
+			min-height: 42rem;
+		}
+
+		.gift-wash {
+			inset: 12% 2% 5%;
+		}
+
+		.desktop-break {
+			display: none;
+		}
+
+		.gift-message {
+			font-size: 1.3rem;
+		}
+
+		.account-number {
+			font-size: .78rem;
+			letter-spacing: .045em;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.gift-wash {
+			transform: none;
+		}
+	}
+</style>

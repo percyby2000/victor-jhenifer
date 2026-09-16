@@ -1,0 +1,346 @@
+---
+const mapLocations = {
+	ceremony: '-13.177422077061612,-74.2249098792862',
+	celebration: '-13.175835,-74.220397',
+};
+
+const calendarLinks = {
+	ceremony: 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=Ceremonia%20Victor%20y%20Jhenifer&dates=20261008T100000/20261008T110000&details=Ceremonia%20de%20la%20boda%20de%20Victor%20y%20Jhenifer&location=Iglesia%20Evangelica%20Primitiva%20LADP%2C%20Jiron%20Huancavelica%20163%2C%20Ayacucho&ctz=America%2FLima',
+	celebration: 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=Celebracion%20Victor%20y%20Jhenifer&dates=20261008T130000/20261008T160000&details=Celebracion%20de%20la%20boda%20de%20Victor%20y%20Jhenifer&location=-13.175835%2C-74.220397&ctz=America%2FLima',
+};
+---
+
+<section class="agenda" aria-labelledby="agenda-title">
+	<div class="agenda-heading reveal">
+		<p>Compartamos este momento</p>
+		<h2 id="agenda-title">Agenda</h2>
+	</div>
+
+	<div class="events-grid">
+		<article class="event-card reveal">
+			<img class="event-icon" src="/iconos/svgexport-2.svg" alt="" aria-hidden="true" />
+			<h3>Ceremonia</h3>
+			<div class="event-detail">
+				<strong>D&#237;a</strong>
+				<p>Jueves 8 de octubre &middot; 10:00 AM</p>
+				<a class="event-button calendar-button" href={calendarLinks.ceremony} target="_blank" rel="noreferrer">Agendar</a>
+			</div>
+			<div class="event-detail">
+				<strong>Lugar</strong>
+				<p>Iglesia Evang&#233;lica Primitiva LADP<br />Jir&#243;n Huancavelica 163, Ayacucho</p>
+				<div class="event-actions">
+					<button class="event-button map-button" type="button" data-location={mapLocations.ceremony} data-title="Iglesia Evang&#233;lica Primitiva LADP" aria-label="Ver ubicaci&#243;n de la ceremonia">Ver ubicaci&#243;n</button>
+				</div>
+			</div>
+		</article>
+
+		<article class="event-card reveal reveal-delay">
+			<img class="event-icon celebration-icon" src="/iconos/svgexport-9.svg" alt="" aria-hidden="true" />
+			<h3>Celebraci&#243;n</h3>
+			<div class="event-detail">
+				<strong>D&#237;a</strong>
+				<p>Jueves 8 de octubre &middot; 01:00 PM</p>
+				<a class="event-button calendar-button" href={calendarLinks.celebration} target="_blank" rel="noreferrer">Agendar</a>
+			</div>
+			<div class="event-detail">
+				<strong>Lugar</strong>
+				<p>Local del evento<br />Ayacucho, Per&#250;</p>
+				<div class="event-actions">
+					<button class="event-button map-button" type="button" data-location={mapLocations.celebration} data-title="Local del evento" aria-label="Ver ubicaci&#243;n de la celebraci&#243;n">Ver ubicaci&oacute;n</button>
+				</div>
+			</div>
+		</article>
+	</div>
+
+	<dialog class="map-dialog" aria-labelledby="map-title">
+		<div class="map-dialog-header">
+			<div>
+				<p>Ubicaci&#243;n del evento</p>
+				<h2 id="map-title">Mapa</h2>
+			</div>
+			<button class="close-button" type="button" aria-label="Cerrar mapa">&times;</button>
+		</div>
+		<iframe class="map-frame" title="Mapa de la ubicaci&#243;n del evento" loading="lazy"></iframe>
+	</dialog>
+</section>
+
+<script>
+	const agendaItems = document.querySelectorAll<HTMLElement>('.agenda .reveal');
+	const mapDialog = document.querySelector<HTMLDialogElement>('.map-dialog');
+	const mapFrame = document.querySelector<HTMLIFrameElement>('.map-frame');
+	const mapTitle = document.querySelector<HTMLElement>('#map-title');
+	const closeMapButton = document.querySelector<HTMLButtonElement>('.close-button');
+
+	document.querySelectorAll<HTMLButtonElement>('.map-button').forEach((button) => {
+		button.addEventListener('click', () => {
+			const location = button.dataset.location;
+			if (!location || !mapDialog || !mapFrame || !mapTitle) return;
+
+			mapTitle.textContent = button.dataset.title ?? 'Mapa';
+			mapFrame.src = `https://maps.google.com/maps?q=${encodeURIComponent(location)}&output=embed`;
+			mapDialog.showModal();
+		});
+	});
+
+	closeMapButton?.addEventListener('click', () => mapDialog?.close());
+	mapDialog?.addEventListener('click', (event) => {
+		if (event.target === mapDialog) mapDialog.close();
+	});
+
+	if ('IntersectionObserver' in window) {
+		const observer = new IntersectionObserver((entries) => {
+			entries.forEach((entry) => {
+				if (entry.isIntersecting) {
+					entry.target.classList.add('is-visible');
+					observer.unobserve(entry.target);
+				}
+			});
+		}, { threshold: 0.16 });
+
+		agendaItems.forEach((item) => observer.observe(item));
+	} else {
+		agendaItems.forEach((item) => item.classList.add('is-visible'));
+	}
+</script>
+
+<style>
+	@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500;600&display=swap');
+
+	.agenda {
+		box-sizing: border-box;
+		min-height: 100svh;
+		padding: clamp(4rem, 10vw, 7rem) clamp(1rem, 5vw, 4rem);
+		background: #EEF8FF;
+		color: #04294A;
+		font-family: 'Montserrat', sans-serif;
+		text-align: center;
+	}
+
+	.agenda-heading {
+		margin-bottom: 2.5rem;
+		transition: opacity .8s ease, transform .8s ease;
+	}
+
+	.agenda-heading p {
+		margin: 0 0 .35rem;
+		color: #376282;
+		font-size: .75rem;
+		font-weight: 300;
+		letter-spacing: .18em;
+		text-transform: uppercase;
+	}
+
+	.agenda-heading h2 {
+		margin: 0;
+		color: #04294A;
+		font-family: 'Cormorant Garamond', Georgia, serif;
+		font-size: clamp(2.5rem, 6vw, 4.4rem);
+		font-weight: 500;
+		letter-spacing: .01em;
+	}
+
+	.events-grid {
+		display: grid;
+		width: min(100%, 70rem);
+		margin: 0 auto;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: clamp(1.25rem, 8vw, 7rem);
+	}
+
+	.reveal {
+		opacity: 0;
+		transform: translateY(2rem);
+		transition: opacity .8s ease, transform .8s cubic-bezier(.2, .75, .25, 1);
+	}
+
+	.reveal.is-visible {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	.reveal-delay {
+		transition-delay: .16s;
+	}
+
+	.event-card {
+		display: flex;
+		min-height: 42rem;
+		align-items: center;
+		flex-direction: column;
+		padding: 2.5rem clamp(1.25rem, 4vw, 3.5rem);
+		background: #DAE8F1;
+		border-radius: .7rem;
+		box-shadow: 0 .8rem 2rem rgba(4, 41, 74, .1);
+		transition: background-color .35s ease, box-shadow .35s ease;
+	}
+
+	.event-icon {
+		width: 6.5rem;
+		height: 6.5rem;
+		margin-bottom: 1.25rem;
+		object-fit: contain;
+		filter: saturate(.8) drop-shadow(0 .25rem .25rem rgba(4, 41, 74, .08));
+		transition: transform .35s ease;
+	}
+
+	.event-card:hover .event-icon {
+		transform: translateY(-.35rem) scale(1.05);
+	}
+
+	.celebration-icon {
+		transform: rotate(-12deg) scale(.8);
+	}
+
+	.event-card:hover .celebration-icon {
+		transform: rotate(-12deg) translateY(-.35rem) scale(.86);
+	}
+
+	.event-card h3 {
+		margin: 0 0 2.8rem;
+		color: #04294A;
+		font-family: 'Cormorant Garamond', Georgia, serif;
+		font-size: clamp(2rem, 4vw, 3rem);
+		font-weight: 500;
+	}
+
+	.event-detail {
+		width: 100%;
+		margin-bottom: 2.3rem;
+	}
+
+	.event-detail strong {
+		display: block;
+		margin-bottom: .65rem;
+		font-family: 'Cormorant Garamond', Georgia, serif;
+		font-size: clamp(1.6rem, 3vw, 2.2rem);
+		font-weight: 500;
+	}
+
+	.event-detail p {
+		min-height: 3.2rem;
+		margin: 0 auto 1.15rem;
+		color: #376282;
+		font-weight: 400;
+		font-size: clamp(.9rem, 1.8vw, 1.15rem);
+		line-height: 1.5;
+	}
+
+	.event-button {
+		display: block;
+		width: min(100%, 16rem);
+		border: 0;
+		margin: 0 auto;
+		padding: .8rem 1rem;
+		border-radius: .55rem;
+		background: #376282;
+		color: #FFFFFF;
+		font-family: 'Montserrat', sans-serif;
+		font-size: 1.05rem;
+		font-weight: 500;
+		text-decoration: none;
+		transition: background-color .25s ease, transform .25s ease;
+		cursor: pointer;
+	}
+
+	.event-button:hover,
+	.event-button:focus-visible {
+		background: #04294A;
+		transform: translateY(-2px);
+	}
+
+	.calendar-button {
+		background: #04294A;
+	}
+
+	.calendar-button:hover,
+	.calendar-button:focus-visible {
+		background: #244f6b;
+	}
+
+	.map-dialog {
+		width: min(42rem, calc(100% - 2rem));
+		padding: 1.5rem;
+		border: 0;
+		border-radius: .7rem;
+		background: #F8FCFF;
+		color: #04294A;
+		box-shadow: 0 1.5rem 4rem rgba(4, 41, 74, .28);
+	}
+
+	.map-dialog::backdrop {
+		background: rgba(4, 41, 74, .6);
+	}
+
+	.map-dialog-header {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-bottom: 1rem;
+	}
+
+	.map-dialog-header p,
+	.map-dialog-header h2 {
+		margin: 0;
+	}
+
+	.map-dialog-header p {
+		color: #376282;
+		font-size: .75rem;
+		letter-spacing: .12em;
+		text-transform: uppercase;
+	}
+
+	.map-dialog-header h2 {
+		font-family: 'Cormorant Garamond', Georgia, serif;
+		font-size: 2rem;
+		font-weight: 500;
+	}
+
+	.close-button {
+		border: 0;
+		background: transparent;
+		color: #04294A;
+		font-size: 2rem;
+		line-height: 1;
+		cursor: pointer;
+	}
+
+	.map-frame {
+		display: block;
+		width: 100%;
+		min-height: 22rem;
+		border: 0;
+	}
+
+	@media (max-width: 700px) {
+		.agenda {
+			padding-inline: .8rem;
+		}
+
+		.events-grid {
+			grid-template-columns: 1fr;
+			gap: 1.5rem;
+		}
+
+		.event-card {
+			min-height: auto;
+			padding-block: 2rem 2.5rem;
+		}
+
+		.event-card h3 {
+			margin-bottom: 2rem;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.reveal,
+		.event-icon,
+		.event-button {
+			transition: none;
+			animation: none;
+		}
+
+		.reveal { opacity: 1; transform: none; }
+	}
+</style>

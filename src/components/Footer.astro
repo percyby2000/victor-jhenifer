@@ -1,0 +1,60 @@
+<footer class="site-footer">
+	<a class="footer-link" href="https://github.com/Percyby2000" target="_blank" rel="noreferrer" aria-label="Visitar GitHub de Percycn">
+		<span>DESARROLLADO CON</span> <strong aria-hidden="true">&#10084;</strong> <span>POR</span> <b>Percycn</b>
+	</a>
+</footer>
+
+<style>
+	.site-footer {
+		display: grid;
+		min-height: 3.8rem;
+		box-sizing: border-box;
+		place-items: center;
+		padding: .65rem 1rem;
+		background: #dcebf4;
+		color: #527693;
+		font-family: 'Cormorant Garamond', Georgia, serif;
+		text-align: center;
+		box-shadow: 0 -.35rem .7rem rgba(4, 41, 74, .12);
+	}
+
+	.footer-link {
+		display: flex;
+		align-items: baseline;
+		justify-content: center;
+		gap: .3rem;
+		color: inherit;
+		font-size: clamp(.7rem, 1.5vw, .85rem);
+		letter-spacing: .08em;
+		line-height: 1;
+		text-decoration: none;
+		transition: color .25s ease, opacity .25s ease;
+	}
+
+	.footer-link:hover,
+	.footer-link:focus-visible {
+		color: #244f6b;
+		opacity: .82;
+	}
+
+	.site-footer strong {
+		color: #376282;
+		font-family: sans-serif;
+		font-size: .9em;
+		letter-spacing: 0;
+	}
+
+	.site-footer b {
+		font-family: Arial, sans-serif;
+		font-size: 1.35em;
+		font-weight: 700;
+		letter-spacing: -.06em;
+	}
+
+	@media (max-width: 420px) {
+		.footer-link {
+			gap: .2rem;
+			font-size: .62rem;
+		}
+	}
+</style>

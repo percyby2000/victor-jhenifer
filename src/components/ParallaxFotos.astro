@@ -1,0 +1,274 @@
+---
+const photos = [
+	{
+		src: '/fotos/1.webp',
+		alt: 'Victor y Jhenifer compartiendo un momento especial',
+		label: 'El comienzo',
+		text: 'Dos caminos que decidieron encontrarse.',
+	},
+	{
+		src: '/fotos/4.webp',
+		alt: 'Victor y Jhenifer durante su historia de amor',
+		label: 'Nuestra historia',
+		text: '"Entre tantos caminos en el mundo, el mejor siempre fue encontrarnos"',
+	},
+];
+---
+
+<section class="parallax-gallery" aria-label="Momentos de Victor y Jhenifer">
+	<div class="parallax-stage">
+		<div class="parallax-entry" aria-hidden="true"></div>
+		<div class="parallax-progress" aria-hidden="true"><span></span></div>
+		<p class="parallax-counter" aria-hidden="true"><span>01</span> / 02</p>
+
+		{photos.map((photo, index) => (
+			<figure class:list={['parallax-photo', `parallax-photo-${index + 1}`]} data-photo-index={index}>
+				<img src={photo.src} alt={photo.alt} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
+				<div class="photo-shade" aria-hidden="true"></div>
+				<figcaption>
+					<span class="photo-label">{photo.label}</span>
+					<strong>{photo.text}</strong>
+				</figcaption>
+			</figure>
+		))}
+
+		<div class="scroll-prompt" aria-hidden="true">
+			<span>Desliza</span>
+			<i></i>
+		</div>
+	</div>
+</section>
+
+<script>
+	const gallery = document.querySelector<HTMLElement>('.parallax-gallery');
+	const stage = gallery?.querySelector<HTMLElement>('.parallax-stage');
+	const photos = gallery?.querySelectorAll<HTMLElement>('.parallax-photo');
+	const counter = gallery?.querySelector<HTMLElement>('.parallax-counter span');
+	const progressBar = gallery?.querySelector<HTMLElement>('.parallax-progress span');
+	const entry = gallery?.querySelector<HTMLElement>('.parallax-entry');
+	const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	if (gallery && stage && photos?.length) {
+		let frame = 0;
+
+		const clamp = (value: number) => Math.max(0, Math.min(1, value));
+
+		const updateGallery = () => {
+			frame = 0;
+			const bounds = gallery.getBoundingClientRect();
+			const range = Math.max(gallery.offsetHeight - window.innerHeight, 1);
+			const progress = clamp(-bounds.top / range);
+			const activeIndex = progress > .5 ? 1 : 0;
+
+			photos.forEach((photo, index) => {
+				const ease = (value: number) => value * value * (3 - 2 * value);
+				const photoProgress = index === 0
+					? 1 - ease(clamp((progress - .28) / .34))
+					: ease(clamp((progress - .34) / .34));
+				const shift = (progress - (index === 0 ? .18 : .72)) * (reduceMotion ? 0 : 48);
+				const scale = reduceMotion ? 1 : 1.08 - photoProgress * .08;
+				photo.style.setProperty('--photo-opacity', String(photoProgress));
+				photo.style.setProperty('--image-shift', `${shift}px`);
+				photo.style.setProperty('--image-scale', String(scale));
+			});
+
+			if (counter) counter.textContent = String(activeIndex + 1).padStart(2, '0');
+			if (progressBar) progressBar.style.transform = `scaleX(${progress})`;
+			if (entry) entry.style.opacity = String(1 - clamp(progress / .16));
+		};
+
+		const requestUpdate = () => {
+			if (!frame) frame = window.requestAnimationFrame(updateGallery);
+		};
+
+		window.addEventListener('scroll', requestUpdate, { passive: true });
+		window.addEventListener('resize', requestUpdate, { passive: true });
+		updateGallery();
+	}
+</script>
+
+<style>
+	.parallax-gallery {
+		position: relative;
+		height: 200svh;
+		background: #04294a;
+	}
+
+	.parallax-stage {
+		position: sticky;
+		top: 0;
+		height: 100svh;
+		min-height: 34rem;
+		overflow: hidden;
+		isolation: isolate;
+		background: #04294a;
+	}
+
+	.parallax-entry {
+		position: absolute;
+		inset: 0 0 auto;
+		z-index: 4;
+		height: clamp(5rem, 16vh, 10rem);
+		background: linear-gradient(180deg, #376282 0%, rgba(55, 98, 130, .92) 28%, rgba(4, 41, 74, 0) 100%);
+		pointer-events: none;
+		will-change: opacity;
+	}
+
+	.parallax-photo {
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+		margin: 0;
+		overflow: hidden;
+		opacity: var(--photo-opacity, 0);
+		will-change: opacity, transform;
+	}
+
+	.parallax-photo-1 {
+		--photo-opacity: 1;
+	}
+
+	.parallax-photo img {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: center 46%;
+		transform: translate3d(0, var(--image-shift, 0px), 0) scale(var(--image-scale, 1.08));
+		will-change: transform;
+	}
+
+	.parallax-photo-2 img {
+		object-position: center 40%;
+	}
+
+	.photo-shade {
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+		background:
+			linear-gradient(270deg, rgba(4, 41, 74, .68) 0%, rgba(4, 41, 74, .12) 58%, rgba(4, 41, 74, .22) 100%),
+			linear-gradient(180deg, rgba(4, 41, 74, .3) 0%, transparent 42%);
+	}
+
+	.parallax-photo figcaption {
+		position: absolute;
+		top: clamp(5.5rem, 15vh, 10rem);
+		right: clamp(1.5rem, 7vw, 7rem);
+		z-index: 2;
+		width: min(20rem, calc(100% - 3rem));
+		color: #fff;
+		text-align: right;
+	}
+
+	.photo-label {
+		display: block;
+		margin-bottom: .55rem;
+		color: #dae8f1;
+		font-size: .62rem;
+		letter-spacing: .18em;
+		text-transform: uppercase;
+	}
+
+	.parallax-photo strong {
+		display: block;
+		font-family: var(--font-titulos);
+		font-size: clamp(1.35rem, 3.2vw, 2.5rem);
+		font-weight: var(--grosor-titulos);
+		line-height: 1.08;
+	}
+
+	.parallax-progress {
+		position: absolute;
+		top: clamp(1.5rem, 5vw, 3rem);
+		left: clamp(1.5rem, 5vw, 4rem);
+		z-index: 5;
+		width: min(12rem, 32vw);
+		height: 2px;
+		background: rgba(255, 255, 255, .35);
+	}
+
+	.parallax-progress span {
+		display: block;
+		width: 100%;
+		height: 100%;
+		background: #fff;
+		transform: scaleX(0);
+		transform-origin: left center;
+	}
+
+	.parallax-counter {
+		position: absolute;
+		top: clamp(1.15rem, 4vw, 2.6rem);
+		right: clamp(1.5rem, 5vw, 4rem);
+		z-index: 5;
+		margin: 0;
+		color: rgba(255, 255, 255, .72);
+		font-size: .72rem;
+		letter-spacing: .2em;
+	}
+
+	.parallax-counter span {
+		color: #fff;
+	}
+
+	.scroll-prompt {
+		position: absolute;
+		bottom: clamp(1.5rem, 5vw, 3rem);
+		left: clamp(1.5rem, 5vw, 4rem);
+		z-index: 5;
+		display: flex;
+		align-items: center;
+		gap: .8rem;
+		color: rgba(255, 255, 255, .8);
+		font-size: .68rem;
+		letter-spacing: .2em;
+		text-transform: uppercase;
+	}
+
+	.scroll-prompt i {
+		display: block;
+		width: 1.8rem;
+		height: 1px;
+		background: currentColor;
+	}
+
+	@media (max-width: 600px) {
+		.parallax-stage {
+			min-height: 32rem;
+		}
+
+		.parallax-photo img {
+			object-position: 58% center;
+		}
+
+		.parallax-photo-2 img {
+			object-position: 48% center;
+		}
+
+		.parallax-photo figcaption {
+			top: 5.5rem;
+			right: 1.5rem;
+			width: min(15rem, calc(100% - 3rem));
+		}
+
+		.parallax-photo strong {
+			font-size: clamp(1.25rem, 5.5vw, 1.8rem);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.parallax-photo {
+			will-change: auto;
+		}
+
+		.parallax-entry {
+			will-change: auto;
+		}
+
+		.parallax-photo img {
+			transform: none;
+			will-change: auto;
+		}
+	}
+</style>

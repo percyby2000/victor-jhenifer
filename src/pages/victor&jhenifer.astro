@@ -1,0 +1,468 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Musica from '../components/Musica.astro';
+import Temporizador from '../components/Temporizador.astro';
+import Agenda from '../components/Agenda.astro';
+import Regalo from '../components/Regalo.astro';
+import Confirmacion from '../components/Confirmacion.astro';
+import Footer from '../components/Footer.astro';
+import ParallaxFotos from '../components/ParallaxFotos.astro';
+import Galeria from '../components/Galeria.astro';
+---
+
+<Layout>
+	<main class="invitation-page">
+	<section class="cover" aria-labelledby="couple-names">
+		<div class="cover-paper parallax-layer">
+			<img class="cover-texture" src="/portada.webp" alt="" aria-hidden="true" />
+			<img class="top-floral" src="/floreshorizontal.png" alt="" aria-hidden="true" />
+			<div class="cover-content">
+				<p class="date">8.10.2026</p>
+				<div class="rule" aria-hidden="true"></div>
+				<h1 id="couple-names"><span>Victor</span><b>&amp;</b><span>Jhenifer</span></h1>
+				<div class="rule" aria-hidden="true"></div>
+				<p class="subtitle">Nuestra boda</p>
+				<p class="welcome-message">Cord&#243;n de tres dobleces no se rompe pronto.<br />&#128214; Eclesiast&#233;s 4:12</p>
+				<img class="floral-art" src="/descarga.png" alt="Ilustraci&#243;n floral decorativa" />
+			</div>
+
+		</div>
+	</section>
+	<ParallaxFotos />
+	<Galeria />
+	<Temporizador />
+	<div class="floating-divider divider-after-timer" aria-hidden="true">
+		<img src="/flor.png" alt="" />
+	</div>
+	<Agenda />
+	<Regalo />
+
+	<div class="floating-divider divider-before-confirmation" aria-hidden="true">
+		<img src="/flor2.png" alt="" />
+	</div>
+	<Confirmacion />
+	<div class="floating-divider divider-after-confirmation" aria-hidden="true">
+		<img src="/flor.png" alt="" />
+	</div>
+	<Footer />
+
+		<Musica />
+	</main>
+</Layout>
+
+<script>
+	const coverLayer = document.querySelector<HTMLElement>('.parallax-layer');
+
+	const updateParallax = () => {
+		if (!coverLayer || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+		coverLayer.style.setProperty('--parallax-offset', `${Math.min(window.scrollY * 0.12, 70)}px`);
+	};
+
+	window.addEventListener('scroll', updateParallax, { passive: true });
+	updateParallax();
+
+	const floatingDividers = document.querySelectorAll<HTMLElement>('.floating-divider');
+	const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	if (!reduceMotion) {
+		let dividerFrame = 0;
+		const updateDividers = () => {
+			dividerFrame = 0;
+			floatingDividers.forEach((divider) => {
+				const bounds = divider.getBoundingClientRect();
+				const progress = (window.innerHeight - bounds.top) / (window.innerHeight + bounds.height);
+				const shift = Math.max(-1, Math.min(1, progress * 2 - 1));
+				divider.style.setProperty('--divider-shift', `${shift * 1.6}rem`);
+				divider.style.setProperty('--divider-tilt', `${shift * -1.8}deg`);
+			});
+		};
+
+		window.addEventListener('scroll', () => {
+			if (!dividerFrame) dividerFrame = window.requestAnimationFrame(updateDividers);
+		}, { passive: true });
+		updateDividers();
+	}
+</script>
+
+<style>
+	:global(html),
+	:global(body) {
+		min-height: 100%;
+		background: var(--color-fondo-body);
+	}
+
+	.invitation-page {
+		min-height: 100%;
+		background: var(--color-fondo-body);
+		color: var(--color-subtitulos);
+		animation: invitation-enter 1.6s cubic-bezier(.2, .75, .25, 1) both;
+	}
+
+	@keyframes invitation-enter {
+		from {
+			opacity: 0;
+			transform: translateY(1.5rem) scale(.99);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0) scale(1);
+		}
+	}
+
+	.floating-divider {
+		position: relative;
+		z-index: 4;
+		display: block;
+		width: 100%;
+		height: auto;
+		background: #DAE8F1;
+		--divider-shift: 0rem;
+		--divider-tilt: 0deg;
+		perspective: 900px;
+	}
+
+	.divider-after-timer {
+		background: #FFFFFF;
+	}
+
+	.floating-divider img {
+		display: block;
+		width: 100%;
+		max-width: none;
+		height: auto;
+		filter: drop-shadow(0 .55rem .45rem rgba(4, 41, 74, .2));
+		transform: translate3d(0, var(--divider-shift), 0) rotateX(var(--divider-tilt));
+		transform-origin: center;
+		will-change: transform;
+	}
+
+	.cover {
+		position: relative;
+		display: grid;
+		min-height: 100%;
+		place-items: center;
+		padding: 0;
+		overflow: hidden;
+		background: #376282;
+	}
+
+	.cover::before,
+	.cover::after {
+		position: absolute;
+		inset-block: 0;
+		width: min(8vw, 7rem);
+		background: var(--color-pallete-1);
+		content: '';
+		z-index: 0;
+	}
+
+	.cover::before { left: 0; }
+	.cover::after { right: 0; }
+
+	.cover-paper {
+		position: relative;
+		display: flex;
+		box-sizing: border-box;
+		width: min(100%, 58rem);
+		max-width: 100%;
+		min-height: 100svh;
+		align-items: center;
+		justify-content: center;
+		padding: clamp(3rem, 8vw, 7rem) 1.5rem 4rem;
+		z-index: 1;
+		background: var(--color-pallete-5);
+		box-shadow: 0 0 2rem rgba(4, 41, 74, .32);
+		transform: translateY(calc(var(--parallax-offset, 0px) * -1));
+		will-change: transform;
+	}
+
+	.cover-texture {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		opacity: .92;
+		pointer-events: none;
+	}
+
+	.top-floral {
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: 1;
+		display: block;
+		width: 100%;
+		height: auto;
+		max-height: 10.5rem;
+		object-fit: cover;
+		object-position: center top;
+		filter: drop-shadow(0 .18rem .22rem rgba(4, 41, 74, .12));
+		pointer-events: none;
+	}
+
+	.cover-paper::before {
+		display: none;
+	}
+
+	.cover-content {
+		position: relative;
+		z-index: 2;
+		width: min(100%, 36rem);
+		max-width: 100%;
+		text-align: center;
+		-webkit-font-smoothing: antialiased;
+	}
+
+	.date,
+	.subtitle,
+	.section-kicker {
+		color: var(--color-titulos);
+		font-family: var(--font-subtitulos);
+		font-weight: var(--grosor-subtitulos);
+	}
+
+	.date {
+		margin: 0 0 1rem;
+		color: #376282;
+		font-size: clamp(.85rem, 2vw, 1.1rem);
+		letter-spacing: .02em;
+	}
+
+	.rule {
+		width: min(100%, 34rem);
+		height: 1px;
+		margin: 0 auto;
+		background: #376282;
+		opacity: .9;
+	}
+
+	h1 {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: clamp(.35rem, 1.7vw, 1rem);
+		margin: 1rem 0;
+		color: #04294A;
+		font-family: var(--font-nombres-portada);
+		font-size: clamp(2.6rem, 7vw, 5.4rem);
+		font-weight: var(--grosor-nombres-portada);
+		line-height: 1;
+		letter-spacing: -.04em;
+	}
+
+	h1 b {
+		display: grid;
+		width: clamp(2.5rem, 6vw, 4.2rem);
+		height: clamp(2.5rem, 6vw, 4.2rem);
+		place-items: center;
+		border-radius: 50%;
+		background: #376282;
+		color: var(--color-pallete-3);
+		font-size: .55em;
+		font-weight: var(--grosor-fuente-regular);
+		letter-spacing: 0;
+	}
+
+	.subtitle {
+		margin: 1rem 0 0;
+		color: #376282;
+		font-family: var(--font-titulos);
+		font-weight: var(--grosor-fuente-light);
+		font-size: clamp(1.7rem, 4vw, 2.7rem);
+		letter-spacing: .03em;
+	}
+
+	.welcome-message {
+		margin: clamp(3rem, 9vh, 6rem) 0 0;
+		color: #04294A;
+		font-family: var(--font-frase-portada);
+		font-size: clamp(1rem, 2.2vw, 1.35rem);
+		font-weight: var(--grosor-frase-portada);
+		line-height: 1.55;
+	}
+
+	.floral-art {
+		display: block;
+		width: min(100%, 31rem);
+		margin: clamp(2rem, 7vh, 5rem) auto -4rem;
+		opacity: .82;
+		transform: translateY(calc(var(--parallax-offset, 0px) * .35));
+	}
+
+	.scroll-cue {
+		position: absolute;
+		bottom: 1.35rem;
+		left: 50%;
+		display: grid;
+		gap: .45rem;
+		justify-items: center;
+		transform: translateX(-50%);
+		color: var(--color-pallete-1);
+		font-size: .63rem;
+		letter-spacing: .14em;
+		text-decoration: none;
+		text-transform: uppercase;
+	}
+
+	.scroll-cue i {
+		display: block;
+		width: .55rem;
+		height: .55rem;
+		border-right: 1px solid currentColor;
+		border-bottom: 1px solid currentColor;
+		transform: rotate(45deg);
+	}
+
+	.intro-section {
+		display: grid;
+		min-height: 70svh;
+		place-content: center;
+		padding: 5rem 1.5rem;
+		background: var(--color-pallete-4);
+		color: var(--color-pallete-2);
+		text-align: center;
+	}
+
+	.section-kicker {
+		margin: 0 0 .5rem;
+		font-size: .75rem;
+		letter-spacing: .2em;
+		text-transform: uppercase;
+	}
+
+	.intro-section h2 {
+		margin: 0;
+		color: var(--color-titulos);
+		font-family: var(--font-titulos);
+		font-size: clamp(2rem, 5vw, 4rem);
+		font-weight: var(--grosor-titulos);
+	}
+
+	.intro-section p:last-child {
+		max-width: 28rem;
+		margin: 1rem auto 0;
+		font-size: 1.1rem;
+		font-weight: var(--grosor-fuente-light);
+	}
+
+	@media (max-width: 600px) {
+		.cover {
+			min-height: 100svh;
+			padding: .5rem 0;
+		}
+
+		.cover::before,
+		.cover::after {
+			width: .5rem;
+		}
+
+		.cover-paper {
+			width: calc(100% - 1rem);
+			min-height: 100svh;
+			padding: 3.5rem .85rem 4.5rem;
+		}
+
+		.top-floral {
+			width: 150%;
+			max-width: none;
+			left: -25%;
+			max-height: 7rem;
+		}
+
+		.cover-paper::before {
+			inset: .55rem;
+		}
+
+		.floral-art {
+			width: min(100%, 24rem);
+			margin: 2.5rem auto -2rem;
+		}
+
+		h1 {
+			gap: .3rem;
+			font-size: clamp(2rem, 10vw, 3.35rem);
+			letter-spacing: -.05em;
+		}
+
+		h1 b {
+			width: clamp(2.05rem, 10vw, 3rem);
+			height: clamp(2.05rem, 10vw, 3rem);
+		}
+
+		.date {
+			font-size: .78rem;
+		}
+
+		.subtitle {
+			font-size: clamp(1.5rem, 8vw, 2.1rem);
+		}
+
+		.welcome-message {
+			margin-top: 2.2rem;
+			font-size: .95rem;
+		}
+
+		.scroll-cue {
+			bottom: 1rem;
+			font-size: .52rem;
+			letter-spacing: .1em;
+		}
+	}
+
+	@media (max-width: 360px) {
+		.cover-paper {
+			padding-top: 2.5rem;
+		}
+
+		h1 {
+			font-size: clamp(1.8rem, 9.5vw, 2.45rem);
+		}
+
+		.welcome-message {
+			margin-top: 1.8rem;
+		}
+
+		.floral-art {
+			margin-top: 1.8rem;
+		}
+	}
+
+	@media (max-height: 650px) and (min-width: 601px) {
+		.cover-paper {
+			padding-top: 2.5rem;
+			padding-bottom: 3rem;
+		}
+
+		.welcome-message {
+			margin-top: 2rem;
+		}
+
+		.floral-art {
+			width: min(100%, 23rem);
+			margin-top: 2rem;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.invitation-page {
+			animation: none;
+		}
+
+		.floating-divider img {
+			animation: none;
+			transform: none;
+			will-change: auto;
+		}
+
+		.cover-paper,
+		.floral-art {
+			transform: none;
+			will-change: auto;
+		}
+
+		.scroll-cue i {
+			animation: none;
+		}
+	}
+</style>

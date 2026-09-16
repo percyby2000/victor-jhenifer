@@ -1,0 +1,211 @@
+<div class="music-control">
+	<audio id="invitation-music" src="/music1.mp3" loop preload="none" autoplay></audio>
+	<button id="music-button" class="music-button" type="button" aria-label="Reproducir m&uacute;sica" aria-pressed="false">
+		<span class="music-icon-wrap" aria-hidden="true">
+			<img class="music-icon" src="/iconos/svgexport-14.svg" alt="" />
+			<span class="sound-wave wave-one"></span>
+			<span class="sound-wave wave-two"></span>
+		</span>
+	</button>
+</div>
+
+<script>
+	const audio = document.querySelector<HTMLAudioElement>('#invitation-music');
+	const musicButton = document.querySelector<HTMLButtonElement>('#music-button');
+
+	const updateMusicState = (isPlaying: boolean) => {
+		if (!musicButton) return;
+		musicButton.classList.toggle('is-playing', isPlaying);
+		musicButton.setAttribute('aria-label', isPlaying ? 'Pausar m\u00FAsica' : 'Reproducir m\u00FAsica');
+		musicButton.setAttribute('aria-pressed', String(isPlaying));
+	};
+
+	const playMusic = async (event?: Event) => {
+		if (!audio || !audio.paused) return;
+		if (event?.target instanceof Node && musicButton?.contains(event.target)) return;
+		if (event?.type === 'keydown' && document.activeElement === musicButton) return;
+
+		try {
+			await audio.play();
+			updateMusicState(true);
+			document.removeEventListener('pointerdown', playMusic);
+			document.removeEventListener('keydown', playMusic);
+		} catch {
+			updateMusicState(false);
+		}
+	};
+
+	void playMusic();
+	document.addEventListener('pointerdown', playMusic);
+	document.addEventListener('keydown', playMusic);
+
+	musicButton?.addEventListener('click', async () => {
+		if (!audio) return;
+
+		if (audio.paused) {
+			try {
+				await audio.play();
+				updateMusicState(true);
+			} catch {
+				updateMusicState(false);
+			}
+		} else {
+			audio.pause();
+			updateMusicState(false);
+		}
+	});
+
+	audio?.addEventListener('pause', () => updateMusicState(false));
+	audio?.addEventListener('play', () => updateMusicState(true));
+</script>
+
+<style>
+	.music-control {
+		position: fixed;
+		z-index: 20;
+		right: max(1.25rem, env(safe-area-inset-right));
+		bottom: max(1.25rem, env(safe-area-inset-bottom));
+	}
+
+	.music-button {
+		position: relative;
+		display: grid;
+		width: 4.75rem;
+		height: 4.75rem;
+		place-items: center;
+		border: 1px solid rgba(255, 255, 255, .55);
+		border-radius: 50%;
+		background: rgba(214, 226, 231, .84);
+		box-shadow: 0 .55rem 1.25rem rgba(57, 77, 88, .17), inset 0 0 0 .35rem rgba(255, 255, 255, .16);
+		color: #2d6082;
+		cursor: pointer;
+		backdrop-filter: blur(5px);
+		transition: transform .3s cubic-bezier(.2, .8, .2, 1), background-color .3s ease, box-shadow .3s ease;
+	}
+
+	.music-button:hover {
+		transform: translateY(-4px) scale(1.04);
+		background: rgba(194, 215, 225, .98);
+		box-shadow: 0 .8rem 1.5rem rgba(57, 77, 88, .22), inset 0 0 0 .35rem rgba(255, 255, 255, .24);
+	}
+
+	.music-button:focus-visible {
+		outline: 2px solid #2d6082;
+		outline-offset: 4px;
+	}
+
+	.music-icon-wrap {
+		position: relative;
+		display: grid;
+		width: 3.25rem;
+		height: 3.25rem;
+		place-items: center;
+	}
+
+	.music-icon {
+		display: block;
+		width: 3.2rem;
+		height: 3.2rem;
+		object-fit: contain;
+		filter: drop-shadow(0 .12rem .1rem rgba(45, 96, 130, .12));
+		transition: transform .4s ease, filter .4s ease;
+	}
+
+	.sound-wave {
+		position: absolute;
+		width: .7rem;
+		height: .7rem;
+		border: 2px solid #376282;
+		border-left-color: transparent;
+		border-bottom-color: transparent;
+		border-radius: 50%;
+		opacity: 0;
+	}
+
+	.wave-one {
+		right: -.1rem;
+		top: .2rem;
+		transform: rotate(45deg);
+	}
+
+	.wave-two {
+		right: -.35rem;
+		top: -.12rem;
+		width: 1rem;
+		height: 1rem;
+		transform: rotate(45deg);
+	}
+
+	.music-button.is-playing {
+		animation: button-breathe 1.7s ease-in-out infinite;
+	}
+
+	.music-button.is-playing .music-icon {
+		transform: rotate(-7deg) scale(1.06);
+		filter: drop-shadow(0 .18rem .18rem rgba(45, 96, 130, .25));
+	}
+
+	.music-button.is-playing .sound-wave {
+		animation: wave-show 1.5s ease-out infinite;
+	}
+
+	.music-button.is-playing .wave-two {
+		animation-delay: .35s;
+	}
+
+	@keyframes button-breathe {
+		0%, 100% { box-shadow: 0 .55rem 1.25rem rgba(57, 77, 88, .17), 0 0 0 0 rgba(55, 98, 130, .22); }
+		50% { box-shadow: 0 .75rem 1.5rem rgba(57, 77, 88, .22), 0 0 0 .55rem rgba(55, 98, 130, .04); }
+	}
+
+	@keyframes wave-show {
+		0% { opacity: 0; transform: rotate(45deg) scale(.5); }
+		35%, 65% { opacity: .85; }
+		100% { opacity: 0; transform: rotate(45deg) scale(1.35); }
+	}
+
+	.music-button.is-playing {
+		animation: button-breathe 1.7s ease-in-out infinite;
+	}
+
+	.music-button.is-playing .sound-wave {
+		animation: wave-show 1.5s ease-out infinite;
+	}
+
+	.music-button.is-playing .wave-two {
+		animation-delay: .35s;
+	}
+
+	@keyframes button-breathe {
+		0%, 100% { box-shadow: 0 .55rem 1.25rem rgba(57, 77, 88, .17), 0 0 0 0 rgba(55, 98, 130, .22); }
+		50% { box-shadow: 0 .75rem 1.5rem rgba(57, 77, 88, .22), 0 0 0 .55rem rgba(55, 98, 130, .04); }
+	}
+
+	@keyframes wave-show {
+		0% { opacity: 0; transform: rotate(45deg) scale(.5); }
+		35%, 65% { opacity: .85; }
+		100% { opacity: 0; transform: rotate(45deg) scale(1.35); }
+	}
+
+	@media (max-width: 480px) {
+		.music-button {
+			width: 4rem;
+			height: 4rem;
+		}
+
+		.music-icon-wrap,
+		.music-icon {
+			width: 2.75rem;
+			height: 2.75rem;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.music-button,
+		.music-icon,
+		.sound-wave {
+			transition: none;
+			animation: none;
+		}
+	}
+</style>

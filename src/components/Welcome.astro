@@ -1,0 +1,325 @@
+<main class="invitation-cover">
+	<div class="cover-content">
+		<span class="monogram" aria-hidden="true">
+			<span class="monogram-a">V</span>
+			<span class="monogram-l">J</span>
+		</span>
+
+		<button class="open-invitation" type="button" aria-label="Abrir invitación de Victor y Jhenifer">
+			<span class="open-label">Presiona para<br />abrir</span>
+
+			<span class="ribbon-row">
+				<span class="bow-frame">
+					<img class="bow" src="/mon.webp" alt="Mo&ntilde;o blanco de la invitaci&oacute;n" width="560" height="560" />
+				</span>
+			</span>
+		</button>
+
+		<p class="hint">Nuestra boda</p>
+		<p class="names">Victor <span>&amp;</span> Jhenifer</p>
+	</div>
+</main>
+<script>
+	const openButton = document.querySelector<HTMLButtonElement>('.open-invitation');
+	const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	openButton?.addEventListener('click', () => {
+		if (openButton.disabled) return;
+		openButton.disabled = true;
+		if (!prefersReducedMotion) {
+			const AudioContextClass = window.AudioContext || (window as typeof window & {
+				webkitAudioContext?: typeof AudioContext;
+			}).webkitAudioContext;
+			if (AudioContextClass) {
+				const audioContext = new AudioContextClass();
+				const oscillator = audioContext.createOscillator();
+				const gain = audioContext.createGain();
+				oscillator.type = 'sine';
+				oscillator.frequency.setValueAtTime(660, audioContext.currentTime);
+				oscillator.frequency.exponentialRampToValueAtTime(990, audioContext.currentTime + 0.16);
+				gain.gain.setValueAtTime(0.0001, audioContext.currentTime);
+				gain.gain.exponentialRampToValueAtTime(0.12, audioContext.currentTime + 0.02);
+				gain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 0.34);
+				oscillator.connect(gain).connect(audioContext.destination);
+				oscillator.start();
+				oscillator.stop(audioContext.currentTime + 0.34);
+			}
+		}
+
+		document.querySelector('.invitation-cover')?.classList.add('is-opening');
+		window.setTimeout(() => {
+			window.location.href = '/victor&jhenifer';
+		}, prefersReducedMotion ? 0 : 2400);
+	});
+</script>
+
+<style>
+	@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Meddon&display=swap');
+
+	:global(*) {
+		box-sizing: border-box;
+	}
+
+	:global(html, body) {
+		height: 100%;
+	}
+
+	:global(body) {
+		margin: 0;
+		background: #faf7f2;
+		color: #362f28;
+		font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+	}
+
+	.invitation-cover {
+		--gold: #5b86a9;
+		--ink: #344f4d;
+		--ink-soft: #756a5c;
+		--ink-faint: #948879;
+
+		position: relative;
+		display: grid;
+		min-height: 100vh;
+		min-height: 100svh;
+		place-items: center;
+		background: #faf7f2;
+	}
+
+	@supports (height: 100dvh) {
+		.invitation-cover {
+			min-height: 100dvh;
+		}
+	}
+
+	.cover-content {
+		display: flex;
+		width: min(90%, 26rem);
+		min-height: 100vh;
+		min-height: 100svh;
+		align-items: center;
+		flex-direction: column;
+		justify-content: center;
+		gap: clamp(1.25rem, 4vh, 2.25rem);
+		padding-block: clamp(1.5rem, 8vh, 4rem);
+		text-align: center;
+		opacity: 0;
+		animation: settle-in 900ms ease-out 120ms forwards;
+	}
+
+	@supports (height: 100dvh) {
+		.cover-content {
+			min-height: 100dvh;
+		}
+	}
+
+	/* Monogram: two interlocked initials, duotone gold + ink */
+	.monogram {
+		position: relative;
+		display: block;
+		height: clamp(4.5rem, 16vw, 6rem);
+		width: clamp(4.5rem, 16vw, 6rem);
+		font-family: 'Meddon', 'Cormorant Garamond', serif;
+		font-weight: 400;
+		line-height: 1;
+	}
+
+	.monogram-a,
+	.monogram-l {
+		position: absolute;
+		top: 0;
+		font-size: clamp(3.6rem, 13vw, 4.8rem);
+	}
+
+	.monogram-a {
+		left: 6%;
+		color: var(--gold);
+	}
+
+	.monogram-l {
+		left: 32%;
+		top: 8%;
+		color: var(--ink);
+	}
+
+	.open-invitation {
+		position: relative;
+		display: flex;
+		width: 100%;
+		max-width: 22rem;
+		appearance: none;
+		flex-direction: column;
+		align-items: center;
+		gap: clamp(1rem, 3.5vh, 1.75rem);
+		border: 0;
+		background: transparent;
+		cursor: pointer;
+		padding: 0;
+		transition: transform .35s ease;
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.open-invitation:hover {
+			transform: translateY(-3px);
+		}
+
+		.open-invitation:hover .bow {
+			filter: drop-shadow(0 1.1rem 1.2rem rgba(72, 57, 43, .2));
+			transform: scale(1.015);
+		}
+	}
+
+	.open-invitation:active {
+		transform: translateY(-1px) scale(.99);
+	}
+
+	.open-invitation:focus-visible {
+		outline: 2px solid var(--gold);
+		outline-offset: 10px;
+		border-radius: .25rem;
+	}
+
+	.open-label {
+		color: var(--ink);
+		font-size: clamp(.7rem, 2.4vw, .8rem);
+		font-weight: 500;
+		letter-spacing: .32em;
+		line-height: 1.7;
+		text-transform: uppercase;
+		text-indent: .32em;
+	}
+
+	.ribbon-row {
+		display: flex;
+		width: 100%;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.ribbon-dash {
+		height: 1px;
+		width: clamp(1rem, 6vw, 2rem);
+		background: var(--ink-faint);
+		flex: 0 0 auto;
+	}
+
+	.bow-frame {
+		display: block;
+		width: min(100%, 15rem);
+		flex: 1 1 auto;
+		max-width: 13rem;
+	}
+
+	.bow {
+		display: block;
+		width: 100%;
+		height: auto;
+		filter: drop-shadow(0 1rem 1rem rgba(72, 57, 43, .13));
+		transition: filter .35s ease, transform .35s ease;
+	}
+
+	.hint {
+		margin: 0;
+		color: var(--ink-faint);
+		font-size: clamp(.62rem, 2vw, .7rem);
+		letter-spacing: .08em;
+		font-style: italic;
+	}
+
+	.names {
+		margin: 0;
+		color: var(--ink-soft);
+		font-size: clamp(1rem, 3.4vw, 1.2rem);
+		letter-spacing: .2em;
+	}
+
+	.names span {
+		padding: 0 .35em;
+		color: var(--gold);
+		font-style: italic;
+	}
+
+	.is-opening .cover-content {
+		animation: leave-cover 2.4s cubic-bezier(.65, 0, .35, 1) forwards;
+	}
+
+	.is-opening {
+		animation: cover-fade 2.4s cubic-bezier(.65, 0, .35, 1) forwards;
+		pointer-events: none;
+	}
+
+	@keyframes settle-in {
+		from { opacity: 0; transform: translateY(6px); }
+		to { opacity: 1; transform: translateY(0); }
+	}
+
+	@keyframes leave-cover {
+		0% { opacity: 1; transform: scale(1); }
+		35% { opacity: 1; transform: scale(1.015); }
+		100% { opacity: 0; transform: scale(1.045); }
+	}
+
+	@keyframes cover-fade {
+		0% { opacity: 1; }
+		100% { opacity: 0; }
+	}
+
+	@media (max-width: 360px) {
+		.cover-content {
+			gap: clamp(1rem, 3vh, 1.5rem);
+		}
+	}
+
+	@media (min-width: 640px) {
+		.cover-content {
+			width: min(80%, 30rem);
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.cover-content {
+			width: min(60%, 34rem);
+		}
+	}
+
+	@media (max-height: 480px) {
+		.cover-content {
+			gap: clamp(.6rem, 2.5vh, 1rem);
+			padding-block: .75rem;
+		}
+
+		.monogram {
+			height: clamp(3.25rem, 13vh, 4.25rem);
+			width: clamp(3.25rem, 13vh, 4.25rem);
+		}
+
+		.monogram-a,
+		.monogram-l {
+			font-size: clamp(2.75rem, 11vh, 3.5rem);
+		}
+
+		.bow-frame {
+			max-width: 9rem;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.open-invitation,
+		.bow {
+			transition: none;
+		}
+
+		.cover-content {
+			animation: none;
+			opacity: 1;
+		}
+
+		.is-opening .cover-content {
+			animation-duration: .01ms;
+		}
+
+		.is-opening {
+			animation-duration: .01ms;
+		}
+	}
+</style>

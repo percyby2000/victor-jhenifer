@@ -1,0 +1,97 @@
+<section class="countdown" aria-label="Cuenta regresiva">
+    
+	<p class="countdown-date">8 de octubre del 2026</p>
+	<h2>Falta</h2>
+	<div class="timer">
+		<div class="unit"><span class="number" data-unit="days">00</span><span class="label">d&iacute;as</span></div>
+		<i aria-hidden="true"></i>
+		<div class="unit"><span class="number" data-unit="hours">00</span><span class="label">hs</span></div>
+		<i aria-hidden="true"></i>
+		<div class="unit"><span class="number" data-unit="minutes">00</span><span class="label">min</span></div>
+		<i aria-hidden="true"></i>
+		<div class="unit"><span class="number" data-unit="seconds">00</span><span class="label">seg</span></div>
+	</div>
+	<svg class="heart" viewBox="0 0 48 43" aria-hidden="true">
+		<path d="M24 41.5C22.7 40.4 4 28.2 1.8 16.6-.7 3.2 14.7-3.2 24 6.1 33.3-3.2 48.7 3.2 46.2 16.6 44 28.2 25.3 40.4 24 41.5Z" />
+	</svg>
+</section>
+
+<script>
+	const countdown = document.querySelector<HTMLElement>('.countdown');
+	const targetDate = new Date('2026-10-08T00:00:00').getTime();
+
+	const updateCountdown = () => {
+		if (!countdown) return;
+		const remaining = Math.max(0, targetDate - Date.now());
+		const values = {
+			days: Math.floor(remaining / 86400000),
+			hours: Math.floor((remaining % 86400000) / 3600000),
+			minutes: Math.floor((remaining % 3600000) / 60000),
+			seconds: Math.floor((remaining % 60000) / 1000),
+		};
+
+		Object.entries(values).forEach(([unit, value]) => {
+			const number = countdown.querySelector<HTMLElement>(`[data-unit="${unit}"]`);
+			if (!number) return;
+			const nextValue = String(value).padStart(2, '0');
+			if (number.textContent === nextValue) return;
+			number.classList.remove('is-changing');
+			void number.offsetWidth;
+			number.textContent = nextValue;
+			number.classList.add('is-changing');
+		});
+	};
+
+	updateCountdown();
+	window.setInterval(updateCountdown, 1000);
+</script>
+
+<style>
+		
+	@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&display=swap');
+	.countdown {
+		box-sizing: border-box;
+		min-height: 553px;
+		padding: 86px 20px 54px;
+		background: var(--color-pallete-4);
+		color: #062d50;
+		text-align: center;
+		font-family: 'Playfair Display', Georgia, serif;
+	}
+	.countdown-date {
+		margin: 0 0 9px;
+		color: #376282;
+		font-family: var(--font-subtitulos);
+		font-size: clamp(.95rem, 2.2vw, 1.25rem);
+		font-weight: var(--grosor-fuente-light);
+		letter-spacing: .08em;
+		text-transform: none;
+	}
+
+	h2 { margin: 0 0 31px; color: #04294A; font-size: 4.55rem; font-weight: 400; line-height: 1; }
+	.timer { display: flex; justify-content: center; align-items: center; color: #386889; }
+	.unit { display: flex; width: 136px; flex-direction: column; align-items: center; }
+	.number { display: inline-block; min-width: 2ch; font-size: clamp(4rem, 6vw, 5.4rem); font-weight: 500; line-height: .98; transform-origin: center bottom; }
+	.number.is-changing { animation: number-change .55s cubic-bezier(.2, .75, .25, 1); }
+	.label { margin-top: 14px; color: #062d50; font-size: 1.8rem; line-height: 1; }
+	i { display: block; width: 1px; height: 115px; background: #386889; }
+	.heart { display: block; width: 42px; height: 38px; margin: 33px auto 0; fill: #386889; }
+	@keyframes number-change {
+		0% { opacity: .25; transform: translateY(.35rem) scale(.86); }
+		60% { opacity: 1; transform: translateY(-.08rem) scale(1.08); }
+		100% { transform: translateY(0) scale(1); }
+	}
+	@media (max-width: 620px) {
+		.countdown { min-height: 420px; padding: 68px 12px 40px; }
+		h2 { font-size: clamp(3.5rem, 15vw, 4.55rem); }
+		.unit { width: 22vw; }
+		.number { font-size: clamp(3rem, 15vw, 4.8rem); }
+		.label { font-size: clamp(1.1rem, 5vw, 1.8rem); }
+		i { height: 88px; }
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.number.is-changing,
+		i,
+		.heart { animation: none; }
+	}
+</style>
