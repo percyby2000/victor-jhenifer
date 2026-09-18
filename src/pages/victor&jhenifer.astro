@@ -16,7 +16,7 @@ import Familia from '../components/Familia.astro';
 	<section class="cover" aria-labelledby="couple-names">
 		<div class="cover-paper parallax-layer">
 			<img class="cover-texture" src="/portada.webp" alt="" aria-hidden="true" />
-			<img class="top-floral" src="/floreshorizontal.png" alt="" aria-hidden="true" />
+			<img class="top-floral" src="/floreshorizontal.png" alt="" aria-hidden="true" decoding="async" />
 			<div class="cover-content">
 				<p class="date">8.10.2026</p>
 				<div class="rule" aria-hidden="true"></div>
@@ -24,7 +24,7 @@ import Familia from '../components/Familia.astro';
 				<div class="rule" aria-hidden="true"></div>
 				<p class="subtitle">Nuestra boda</p>
 				<p class="welcome-message">Cord&#243;n de tres dobleces no se rompe pronto.<br />&#128214; Eclesiast&#233;s 4:12</p>
-				<img class="floral-art" src="/descarga.png" alt="Ilustraci&#243;n floral decorativa" />
+				<img class="floral-art" src="/descarga.png" alt="Ilustraci&#243;n floral decorativa" loading="lazy" decoding="async" />
 			</div>
 
 		</div>
@@ -33,18 +33,18 @@ import Familia from '../components/Familia.astro';
 	<Galeria />
 	<Temporizador />
 	<div class="floating-divider divider-after-timer" aria-hidden="true">
-		<img src="/flor.png" alt="" />
+		<img src="/flor.png" alt="" loading="lazy" decoding="async" />
 	</div>
 	<Familia />
 	<Agenda />
 	<Regalo />
 
 	<div class="floating-divider divider-before-confirmation" aria-hidden="true">
-		<img src="/flor2.png" alt="" />
+		<img src="/flor2.png" alt="" loading="lazy" decoding="async" />
 	</div>
 	<Confirmacion />
 	<div class="floating-divider divider-after-confirmation" aria-hidden="true">
-		<img src="/flor.png" alt="" />
+		<img src="/flor.png" alt="" loading="lazy" decoding="async" />
 	</div>
 	<Footer />
 	</main>

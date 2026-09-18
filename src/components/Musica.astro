@@ -1,5 +1,5 @@
 <div class="music-control">
-	<audio id="invitation-music" src="/music1.mp3" loop preload="none" autoplay></audio>
+	<audio id="invitation-music" src="/music1.mp3" loop preload="none"></audio>
 	<button id="music-button" class="music-button" type="button" aria-label="Reproducir m&uacute;sica" aria-pressed="false">
 		<span class="music-icon-wrap" aria-hidden="true">
 			<img class="music-icon" src="/iconos/svgexport-14.svg" alt="" />
@@ -35,7 +35,6 @@
 		}
 	};
 
-	void playMusic();
 	document.addEventListener('pointerdown', playMusic);
 	document.addEventListener('keydown', playMusic);
 

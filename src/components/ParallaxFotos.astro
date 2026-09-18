@@ -22,7 +22,7 @@ const photos = [
 		
 		{photos.map((photo, index) => (
 			<figure class:list={['parallax-photo', `parallax-photo-${index + 1}`]} data-photo-index={index}>
-				<img src={photo.src} alt={photo.alt} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
+				<img src={photo.src} alt={photo.alt} loading="lazy" decoding="async" />
 				<div class="photo-shade" aria-hidden="true"></div>
 				<figcaption>
 					<span class="photo-label">{photo.label}</span>

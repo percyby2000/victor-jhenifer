@@ -18,7 +18,7 @@ const photos = [
 		<div class="gallery-track" aria-live="polite">
 			{photos.map((photo, index) => (
 				<figure class="gallery-slide" data-slide={index}>
-					<img src={photo.src} alt={photo.alt} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
+					<img src={photo.src} alt={photo.alt} loading="lazy" decoding="async" />
 				</figure>
 			))}
 		</div>
