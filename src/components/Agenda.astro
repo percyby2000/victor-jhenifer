@@ -22,12 +22,12 @@ const calendarLinks = {
 			<h3>Ceremonia</h3>
 			<div class="event-detail">
 				<strong>D&#237;a</strong>
-				<p>Jueves 8 de octubre &middot; 10:00 AM</p>
+				<p>Jueves 8 de octubre &middot; 11:00 AM</p>
 				<a class="event-button calendar-button" href={calendarLinks.ceremony} target="_blank" rel="noreferrer">Agendar</a>
 			</div>
 			<div class="event-detail">
 				<strong>Lugar</strong>
-				<p>Iglesia Evang&#233;lica Primitiva LADP<br />Jir&#243;n Huancavelica 163, Ayacucho</p>
+				<p>Local MySky Charky<br />Jir&#243;n Huancavelica 163, Ayacucho</p>
 				<div class="event-actions">
 					<button class="event-button map-button" type="button" data-location={mapLocations.ceremony} data-title="Iglesia Evang&#233;lica Primitiva LADP" aria-label="Ver ubicaci&#243;n de la ceremonia">Ver ubicaci&#243;n</button>
 				</div>
@@ -44,7 +44,8 @@ const calendarLinks = {
 			</div>
 			<div class="event-detail">
 				<strong>Lugar</strong>
-				<p>Local del evento<br />Ayacucho, Per&#250;</p>
+				<p>Av. 13 de Abril Mz. D lte 10 Ref. 
+					<br />(Espalda de arco Carmen alto)</p>
 				<div class="event-actions">
 					<button class="event-button map-button" type="button" data-location={mapLocations.celebration} data-title="Local del evento" aria-label="Ver ubicaci&#243;n de la celebraci&#243;n">Ver ubicaci&oacute;n</button>
 				</div>
@@ -164,7 +165,7 @@ const calendarLinks = {
 
 	.event-card {
 		display: flex;
-		min-height: 42rem;
+		min-height: 38rem;
 		align-items: center;
 		flex-direction: column;
 		padding: 2.5rem clamp(1.25rem, 4vw, 3.5rem);
@@ -218,6 +219,7 @@ const calendarLinks = {
 
 	.event-detail p {
 		min-height: 3.2rem;
+		max-width: 100%;
 		margin: 0 auto 1.15rem;
 		color: #376282;
 		font-weight: 400;
@@ -326,6 +328,15 @@ const calendarLinks = {
 		.event-card {
 			min-height: auto;
 			padding-block: 2rem 2.5rem;
+		}
+
+		.event-icon {
+			width: 5.5rem;
+			height: 5.5rem;
+		}
+
+		.event-detail p {
+			min-height: 0;
 		}
 
 		.event-card h3 {

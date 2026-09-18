@@ -8,6 +8,7 @@ import Confirmacion from '../components/Confirmacion.astro';
 import Footer from '../components/Footer.astro';
 import ParallaxFotos from '../components/ParallaxFotos.astro';
 import Galeria from '../components/Galeria.astro';
+import Familia from '../components/Familia.astro';
 ---
 
 <Layout>
@@ -34,6 +35,7 @@ import Galeria from '../components/Galeria.astro';
 	<div class="floating-divider divider-after-timer" aria-hidden="true">
 		<img src="/flor.png" alt="" />
 	</div>
+	<Familia />
 	<Agenda />
 	<Regalo />
 
@@ -114,17 +116,25 @@ import Galeria from '../components/Galeria.astro';
 		display: block;
 		width: 100%;
 		height: auto;
-		background: #DAE8F1;
+		background: #DCEBF4;
 		--divider-shift: 0rem;
 		--divider-tilt: 0deg;
 		perspective: 900px;
 	}
 
 	.divider-after-timer {
-		background: #FFFFFF;
+		background: #DCEBF4;
+	}
+
+	.divider-before-confirmation {
+	}
+
+	.divider-after-confirmation {
 	}
 
 	.floating-divider img {
+		position: relative;
+		z-index: 1;
 		display: block;
 		width: 100%;
 		max-width: none;
@@ -222,10 +232,13 @@ import Galeria from '../components/Galeria.astro';
 	}
 
 	.date {
-		margin: 0 0 1rem;
+		margin: 0 0 1.15rem;
 		color: #376282;
 		font-size: clamp(.85rem, 2vw, 1.1rem);
-		letter-spacing: .02em;
+		font-weight: var(--grosor-fuente-semi-bold);
+		letter-spacing: .28em;
+		line-height: 1;
+		text-indent: .28em;
 	}
 
 	.rule {
@@ -241,13 +254,13 @@ import Galeria from '../components/Galeria.astro';
 		align-items: center;
 		justify-content: center;
 		gap: clamp(.35rem, 1.7vw, 1rem);
-		margin: 1rem 0;
+		margin: 1.2rem 0 1.05rem;
 		color: #04294A;
 		font-family: var(--font-nombres-portada);
-		font-size: clamp(2.6rem, 7vw, 5.4rem);
+		font-size: clamp(2.7rem, 7.2vw, 5.5rem);
 		font-weight: var(--grosor-nombres-portada);
-		line-height: 1;
-		letter-spacing: -.04em;
+		line-height: .92;
+		letter-spacing: -.055em;
 	}
 
 	h1 b {
@@ -260,16 +273,19 @@ import Galeria from '../components/Galeria.astro';
 		color: var(--color-pallete-3);
 		font-size: .55em;
 		font-weight: var(--grosor-fuente-regular);
-		letter-spacing: 0;
+		letter-spacing: -.08em;
+		line-height: 1;
+		transform: translateY(.03em);
 	}
 
 	.subtitle {
-		margin: 1rem 0 0;
+		margin: 1.05rem 0 0;
 		color: #376282;
 		font-family: var(--font-titulos);
 		font-weight: var(--grosor-fuente-light);
 		font-size: clamp(1.7rem, 4vw, 2.7rem);
-		letter-spacing: .03em;
+		letter-spacing: .015em;
+		line-height: 1.1;
 	}
 
 	.welcome-message {
@@ -278,7 +294,8 @@ import Galeria from '../components/Galeria.astro';
 		font-family: var(--font-frase-portada);
 		font-size: clamp(1rem, 2.2vw, 1.35rem);
 		font-weight: var(--grosor-frase-portada);
-		line-height: 1.55;
+		line-height: 1.65;
+		letter-spacing: .015em;
 	}
 
 	.floral-art {
@@ -391,6 +408,8 @@ import Galeria from '../components/Galeria.astro';
 
 		.date {
 			font-size: .78rem;
+			letter-spacing: .22em;
+			text-indent: .22em;
 		}
 
 		.subtitle {

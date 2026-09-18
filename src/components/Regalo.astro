@@ -4,36 +4,49 @@
 		<h2 id="gift-title">Regalo</h2>
 		<img class="gift-icon" src="/iconos/svgexport-10.svg" alt="" aria-hidden="true" />
 		<p class="gift-message">
-			Nuestro mejor regalo es que est&eacute;s con nosotros <br class="desktop-break" />
-			 en nuestro d&iacute;a, pero si quer&eacute;is hacernos un <br class="desktop-break" />
-			 obsequio, &iexcl;aqu&iacute; est&aacute; nuestro n&uacute;mero de cuenta!
+			Nuestro mejor regalo es compartir este d&iacute;a contigo. Si deseas hacernos un obsequio, puedes hacerlo a través de nuestras cuentas.
 		</p>
-		<p class="account-holder">Victor Raul Berrocal Avalos</p>
-		<button class="account-number" type="button" data-copy-account data-account="00344001335827058453" aria-label="Copiar n&uacute;mero de cuenta">
-			<span class="account-number-value">0034 4001 3358 2705 8453</span>
-		</button>
+		<div class="account-list">
+			<div class="account-card">
+				<p class="account-label">Cuenta Simple Soles</p>
+				<p class="account-bank">Interbank</p>
+				<button class="account-number" type="button" data-copy-account data-account="440 3358270584" aria-label="Copiar n&uacute;mero de cuenta Simple">
+					<span class="account-number-value">440 3358270584</span>
+					<span class="copy-label">Copiar</span>
+				</button>
+			</div>
+			<div class="account-card">
+				<p class="account-label">Cuenta interbancaria</p>
+				<p class="account-bank">CCI</p>
+				<button class="account-number" type="button" data-copy-account data-account="00344001335827058453" aria-label="Copiar n&uacute;mero de cuenta interbancaria">
+					<span class="account-number-value">0034 4001 3358 2705 8453</span>
+					<span class="copy-label">Copiar</span>
+				</button>
+			</div>
+		</div>
 
 		<p class="copy-feedback" aria-live="polite"></p>
 	</div>
 </section>
 
 <script>
-	const accountButton = document.querySelector<HTMLButtonElement>('[data-copy-account]');
 	const copyFeedback = document.querySelector<HTMLElement>('.copy-feedback');
 
-	accountButton?.addEventListener('click', async () => {
-		const account = accountButton.dataset.account ?? '';
+	document.querySelectorAll<HTMLButtonElement>('[data-copy-account]').forEach((accountButton) => {
+		accountButton.addEventListener('click', async () => {
+			const account = accountButton.dataset.account ?? '';
 
-		try {
-			await navigator.clipboard.writeText(account);
-			if (copyFeedback) copyFeedback.textContent = 'N\u00FAmero copiado';
-		} catch {
-			if (copyFeedback) copyFeedback.textContent = 'Selecciona el n\u00FAmero para copiarlo';
-		}
+			try {
+				await navigator.clipboard.writeText(account);
+				if (copyFeedback) copyFeedback.textContent = 'N\u00FAmero copiado';
+			} catch {
+				if (copyFeedback) copyFeedback.textContent = 'Selecciona el n\u00FAmero para copiarlo';
+			}
 
-		window.setTimeout(() => {
-			if (copyFeedback) copyFeedback.textContent = '';
-		}, 2200);
+			window.setTimeout(() => {
+				if (copyFeedback) copyFeedback.textContent = '';
+			}, 2200);
+		});
 	});
 </script>
 
@@ -66,7 +79,7 @@
 		position: relative;
 		z-index: 1;
 		width: min(100% - 2rem, 42rem);
-		padding: 3rem 1rem 3.5rem;
+		padding: 4rem 1rem 4.5rem;
 	}
 
 	.gift-content h2 {
@@ -88,22 +101,56 @@
 	}
 
 	.gift-message {
+		max-width: 34rem;
 		margin: 0 auto;
 		color: #303d45;
-		font-size: clamp(1.35rem, 2.6vw, 1.9rem);
-		line-height: 1.28;
+		font-size: clamp(1.2rem, 2.4vw, 1.65rem);
+		line-height: 1.4;
 	}
 
-	.account-holder {
-		margin: 1.5rem 0 .35rem;
-		font-size: clamp(1.4rem, 3vw, 1.9rem);
+	.account-list {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1rem;
+		margin: 2rem auto 0;
+		text-align: left;
+	}
+
+	.account-card {
+		padding: 1.15rem;
+		border-radius: .65rem;
+		background: rgba(255, 255, 255, .78);
+		box-shadow: 0 .5rem 1.4rem rgba(36, 51, 60, .08);
+	}
+
+	.account-label,
+	.account-bank {
+		margin: 0;
+	}
+
+	.account-label {
+		color: #182c3a;
+		font-size: 1.25rem;
 		font-weight: 600;
+	}
+
+	.account-bank {
+		margin-top: .15rem;
+		color: #527693;
+		font-family: 'Montserrat', Arial, sans-serif;
+		font-size: .68rem;
+		letter-spacing: .12em;
+		text-transform: uppercase;
 	}
 
 	.account-number {
 		display: inline-flex;
+		max-width: 100%;
 		align-items: center;
 		gap: .55rem;
+		width: 100%;
+		justify-content: space-between;
+		margin-top: .8rem;
 		padding: .25rem .4rem;
 		border: 0;
 		background: transparent;
@@ -114,10 +161,21 @@
 		letter-spacing: .08em;
 		font-variant-numeric: tabular-nums;
 		cursor: pointer;
+		text-align: left;
 	}
 
 	.account-number-value {
-		white-space: nowrap;
+		max-width: 100%;
+		white-space: normal;
+		overflow-wrap: anywhere;
+	}
+
+	.copy-label {
+		flex: 0 0 auto;
+		color: #376282;
+		font-size: .68rem;
+		letter-spacing: .08em;
+		text-transform: uppercase;
 	}
 
 	.account-number:hover,
@@ -154,6 +212,15 @@
 
 		.gift-message {
 			font-size: 1.3rem;
+		}
+
+		.account-list {
+			grid-template-columns: 1fr;
+			gap: .75rem;
+		}
+
+		.account-card {
+			padding: 1rem;
 		}
 
 		.account-number {

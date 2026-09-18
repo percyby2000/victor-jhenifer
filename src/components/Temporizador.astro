@@ -51,8 +51,8 @@
 	@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&display=swap');
 	.countdown {
 		box-sizing: border-box;
-		min-height: 553px;
-		padding: 86px 20px 54px;
+		min-height: 34rem;
+		padding: clamp(4rem, 10vw, 5.4rem) 1rem 3.4rem;
 		background: var(--color-pallete-4);
 		color: #062d50;
 		text-align: center;
@@ -68,13 +68,13 @@
 		text-transform: none;
 	}
 
-	h2 { margin: 0 0 31px; color: #04294A; font-size: 4.55rem; font-weight: 400; line-height: 1; }
-	.timer { display: flex; justify-content: center; align-items: center; color: #386889; }
-	.unit { display: flex; width: 136px; flex-direction: column; align-items: center; }
+	h2 { margin: 0 0 2rem; color: #04294A; font-size: clamp(3rem, 8vw, 4.55rem); font-weight: 400; line-height: 1; }
+	.timer { display: flex; width: min(100%, 38rem); margin: 0 auto; justify-content: center; align-items: center; color: #386889; }
+	.unit { display: flex; width: clamp(4rem, 10vw, 8.5rem); flex-direction: column; align-items: center; }
 	.number { display: inline-block; min-width: 2ch; font-size: clamp(4rem, 6vw, 5.4rem); font-weight: 500; line-height: .98; transform-origin: center bottom; }
 	.number.is-changing { animation: number-change .55s cubic-bezier(.2, .75, .25, 1); }
-	.label { margin-top: 14px; color: #062d50; font-size: 1.8rem; line-height: 1; }
-	i { display: block; width: 1px; height: 115px; background: #386889; }
+	.label { margin-top: .8rem; color: #062d50; font-size: clamp(1rem, 3vw, 1.8rem); line-height: 1; }
+	i { display: block; width: 1px; height: clamp(4rem, 10vw, 7.2rem); background: #386889; }
 	.heart { display: block; width: 42px; height: 38px; margin: 33px auto 0; fill: #386889; }
 	@keyframes number-change {
 		0% { opacity: .25; transform: translateY(.35rem) scale(.86); }
@@ -82,7 +82,7 @@
 		100% { transform: translateY(0) scale(1); }
 	}
 	@media (max-width: 620px) {
-		.countdown { min-height: 420px; padding: 68px 12px 40px; }
+		.countdown { min-height: 26rem; padding: 4rem .75rem 2.5rem; }
 		h2 { font-size: clamp(3.5rem, 15vw, 4.55rem); }
 		.unit { width: 22vw; }
 		.number { font-size: clamp(3rem, 15vw, 4.8rem); }
