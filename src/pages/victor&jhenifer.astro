@@ -7,8 +7,26 @@ import Regalo from '../components/Regalo.astro';
 import Confirmacion from '../components/Confirmacion.astro';
 import Footer from '../components/Footer.astro';
 import ParallaxFotos from '../components/ParallaxFotos.astro';
-import Galeria from '../components/Galeria.astro';
+import Gallery from '../components/Gallery.astro';
 import Familia from '../components/Familia.astro';
+
+import foto1 from '../assets/fotos/1.webp';
+import foto2 from '../assets/fotos/2.webp';
+import foto3 from '../assets/fotos/3.webp';
+import foto4 from '../assets/fotos/4.webp';
+import fotoAbrazo from '../assets/fotos/abrazo.webp';
+import fotoAnillo from '../assets/fotos/anillo.webp';
+import fotoPedido from '../assets/fotos/pedidademano.webp';
+
+const galleryPhotos = [
+	{ src: foto1, alt: 'Victor y Jhenifer compartiendo un momento especial' },
+	{ src: fotoPedido, alt: 'Victor pidiendo matrimonio a Jhenifer' },
+	{ src: foto2, alt: 'Victor y Jhenifer celebrando su historia' },
+	{ src: fotoAnillo, alt: 'El anillo de compromiso' },
+	{ src: foto3, alt: 'Un recuerdo especial de Victor y Jhenifer' },
+	{ src: foto4, alt: 'Victor y Jhenifer durante su historia de amor' },
+	{ src: fotoAbrazo, alt: 'Victor y Jhenifer abrazados' },
+];
 ---
 
 <Layout>
@@ -22,7 +40,7 @@ import Familia from '../components/Familia.astro';
 				<div class="rule" aria-hidden="true"></div>
 				<h1 id="couple-names"><span>Victor</span><b>&amp;</b><span>Jhenifer</span></h1>
 				<div class="rule" aria-hidden="true"></div>
-				<p class="subtitle">Nuestra boda</p>
+				<p class="subtitle">Nuestra Boda</p>
 				<p class="welcome-message">Cord&#243;n de tres dobleces no se rompe pronto.<br />&#128214; Eclesiast&#233;s 4:12</p>
 				<img class="floral-art" src="/descarga.png" alt="Ilustraci&#243;n floral decorativa" loading="lazy" decoding="async" />
 			</div>
@@ -30,7 +48,7 @@ import Familia from '../components/Familia.astro';
 		</div>
 	</section>
 	<ParallaxFotos />
-	<Galeria />
+	<Gallery images={galleryPhotos} />
 	<Temporizador />
 	<div class="floating-divider divider-after-timer" aria-hidden="true">
 		<img src="/flor.png" alt="" loading="lazy" decoding="async" />

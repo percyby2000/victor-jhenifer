@@ -1,28 +1,68 @@
+---
+type Account = {
+	label: string;
+	number: string;
+	copy: string;
+	type: 'bank' | 'yape';
+};
+
+const owners: { name: string; accounts: Account[] }[] = [
+	{
+		name: 'V\u00edctor Ra\u00fal Berrocal \u00c1valos',
+		accounts: [
+			{ label: 'Interbank \u00b7 Cuenta en soles', number: '440 3358270584', copy: '440 3358270584', type: 'bank' },
+			{ label: 'Interbank \u00b7 CCI', number: '0034 4001 3358 2705 8453', copy: '00344001335827058453', type: 'bank' },
+			{ label: 'Interbank \u00b7 Cuenta en d\u00f3lares', number: '898 3522563138', copy: '898 3522563138', type: 'bank' },
+			{ label: 'Interbank \u00b7 CCI d\u00f3lares', number: '0038 9801 3522 5631 3845', copy: '00389801352256313845', type: 'bank' },
+			{ label: 'Yape', number: '922 474 109', copy: '922 474 109', type: 'yape' },
+		],
+	},
+	{
+		name: 'Jhenifer Huam\u00e1n Mendoza',
+		accounts: [
+			{ label: 'BCP \u00b7 Cuenta en soles', number: '2209 2767 6490 95', copy: '22092767649095', type: 'bank' },
+			{ label: 'BCP \u00b7 CCI', number: '0022 2019 2767 6490 9529', copy: '00222019276764909529', type: 'bank' },
+			{ label: 'Yape', number: '993 282 973', copy: '993 282 973', type: 'yape' },
+		],
+	},
+];
+---
+
 <section class="gift-section" aria-labelledby="gift-title">
 	<div class="gift-wash" aria-hidden="true"></div>
 	<div class="gift-content">
 		<h2 id="gift-title">Regalo</h2>
 		<img class="gift-icon" src="/iconos/svgexport-10.svg" alt="" aria-hidden="true" />
 		<p class="gift-message">
-			Nuestro mejor regalo es compartir este d&iacute;a contigo. Si deseas hacernos un obsequio, puedes hacerlo a través de nuestras cuentas.
+			Nuestro mejor regalo es compartir este d&iacute;a contigo. Si deseas hacernos un obsequio, puedes hacerlo a trav&eacute;s de nuestras cuentas.
 		</p>
-		<div class="account-list">
-			<div class="account-card">
-				<p class="account-label">Cuenta Simple Soles</p>
-				<p class="account-bank">Interbank</p>
-				<button class="account-number" type="button" data-copy-account data-account="440 3358270584" aria-label="Copiar n&uacute;mero de cuenta Simple">
-					<span class="account-number-value">440 3358270584</span>
-					<span class="copy-label">Copiar</span>
-				</button>
-			</div>
-			<div class="account-card">
-				<p class="account-label">Cuenta interbancaria</p>
-				<p class="account-bank">CCI</p>
-				<button class="account-number" type="button" data-copy-account data-account="00344001335827058453" aria-label="Copiar n&uacute;mero de cuenta interbancaria">
-					<span class="account-number-value">0034 4001 3358 2705 8453</span>
-					<span class="copy-label">Copiar</span>
-				</button>
-			</div>
+
+		<div class="owners-grid">
+			{owners.map((owner) => (
+				<div class="owner-card">
+					<p class="owner-name">{owner.name}</p>
+					<div class="account-list">
+						{owner.accounts.map((account) => (
+							<button
+								class="account-row"
+								type="button"
+								data-copy-account
+								data-account={account.copy}
+								aria-label={`Copiar ${account.label}`}
+							>
+								<span class="account-type">
+									<span class:list={['type-badge', account.type === 'yape' ? 'type-yape' : '']}>
+										{account.type === 'yape' ? 'Yape' : 'Banco'}
+									</span>
+									{account.label}
+								</span>
+								<span class="account-number-value">{account.number}</span>
+								<span class="copy-label">Copiar</span>
+							</button>
+						))}
+					</div>
+				</div>
+			))}
 		</div>
 
 		<p class="copy-feedback" aria-live="polite"></p>
@@ -51,7 +91,7 @@
 </script>
 
 <style>
-	@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Meddon&family=Montserrat:wght@300;400&display=swap');
+	@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap');
 
 	.gift-section {
 		position: relative;
@@ -61,7 +101,7 @@
 		overflow: hidden;
 		background: #fff;
 		color: #24333c;
-		font-family: 'Cormorant Garamond', Georgia, serif;
+		font-family: 'Montserrat', Arial, sans-serif;
 		text-align: center;
 	}
 
@@ -78,16 +118,17 @@
 	.gift-content {
 		position: relative;
 		z-index: 1;
-		width: min(100% - 2rem, 42rem);
+		width: min(100% - 2rem, 60rem);
 		padding: 4rem 1rem 4.5rem;
 	}
 
 	.gift-content h2 {
 		margin: 0 0 .5rem;
 		color: #182c3a;
-		font-family: 'Meddon', 'Brush Script MT', cursive;
+		font-family: 'Playfair Display', Georgia, serif;
 		font-size: clamp(3.2rem, 9vw, 5.7rem);
 		font-weight: 400;
+		font-style: italic;
 		line-height: 1;
 	}
 
@@ -104,97 +145,123 @@
 		max-width: 34rem;
 		margin: 0 auto;
 		color: #303d45;
+		font-family: 'Playfair Display', Georgia, serif;
 		font-size: clamp(1.2rem, 2.4vw, 1.65rem);
 		line-height: 1.4;
 	}
 
-	.account-list {
+	.owners-grid {
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 1rem;
+		gap: 1.25rem;
 		margin: 2rem auto 0;
 		text-align: left;
 	}
 
-	.account-card {
-		padding: 1.15rem;
-		border-radius: .65rem;
-		background: rgba(255, 255, 255, .78);
-		box-shadow: 0 .5rem 1.4rem rgba(36, 51, 60, .08);
+	.owner-card {
+		padding: 1.35rem;
+		border-radius: .75rem;
+		background: rgba(255, 255, 255, .82);
+		box-shadow: 0 .5rem 1.4rem rgba(36, 51, 60, .1);
 	}
 
-	.account-label,
-	.account-bank {
-		margin: 0;
-	}
-
-	.account-label {
+	.owner-name {
+		margin: 0 0 .85rem;
 		color: #182c3a;
-		font-size: 1.25rem;
+		font-family: 'Playfair Display', Georgia, serif;
+		font-size: clamp(1.3rem, 2.6vw, 1.7rem);
 		font-weight: 600;
+		line-height: 1.15;
 	}
 
-	.account-bank {
-		margin-top: .15rem;
-		color: #527693;
+	.account-list {
+		display: grid;
+		gap: .5rem;
+	}
+
+	.account-row {
+		display: grid;
+		width: 100%;
+		grid-template-columns: 1fr auto;
+		align-items: center;
+		gap: .35rem .7rem;
+		padding: .7rem .8rem;
+		border: 1px solid #dbe7f0;
+		border-radius: .55rem;
+		background: #f8fbfd;
+		color: #24333c;
 		font-family: 'Montserrat', Arial, sans-serif;
-		font-size: .68rem;
-		letter-spacing: .12em;
+		text-align: left;
+		cursor: pointer;
+		transition: border-color .25s ease, background-color .25s ease, transform .25s ease;
+	}
+
+	.account-row:hover,
+	.account-row:focus-visible {
+		border-color: #376282;
+		background: #eef7fc;
+		transform: translateY(-1px);
+	}
+
+	.account-type {
+		display: flex;
+		align-items: center;
+		gap: .5rem;
+		color: #376282;
+		font-size: .72rem;
+		font-weight: 600;
+		letter-spacing: .04em;
 		text-transform: uppercase;
 	}
 
-	.account-number {
-		display: inline-flex;
-		max-width: 100%;
-		align-items: center;
-		gap: .55rem;
-		width: 100%;
-		justify-content: space-between;
-		margin-top: .8rem;
-		padding: .25rem .4rem;
-		border: 0;
-		background: transparent;
-		color: #1670a8;
-		font-family: 'Montserrat', Arial, sans-serif;
-		font-size: clamp(.95rem, 2.2vw, 1.3rem);
-		font-weight: 300;
+	.type-badge {
+		display: inline-block;
+		padding: .2rem .5rem;
+		border-radius: 999px;
+		background: #dcebf4;
+		color: #04294a;
+		font-size: .6rem;
 		letter-spacing: .08em;
-		font-variant-numeric: tabular-nums;
-		cursor: pointer;
-		text-align: left;
+		text-transform: uppercase;
+	}
+
+	.type-yape {
+		background: #d2f0e1;
+		color: #1a7a4f;
 	}
 
 	.account-number-value {
-		max-width: 100%;
-		white-space: normal;
+		grid-column: 1 / -1;
+		color: #182c3a;
+		font-size: clamp(1rem, 2vw, 1.15rem);
+		font-weight: 500;
+		letter-spacing: .06em;
+		font-variant-numeric: tabular-nums;
 		overflow-wrap: anywhere;
 	}
 
 	.copy-label {
+		grid-column: 2;
+		grid-row: 1;
 		flex: 0 0 auto;
-		color: #376282;
+		color: #1670a8;
 		font-size: .68rem;
 		letter-spacing: .08em;
 		text-transform: uppercase;
-	}
-
-	.account-number:hover,
-	.account-number:focus-visible {
-		color: #0d456a;
-		text-decoration: underline;
-	}
-
-	.copy-icon {
-		font-family: sans-serif;
-		font-size: 1.4rem;
 	}
 
 	.copy-feedback {
 		min-height: 1.3em;
 		margin: .25rem 0 0;
 		color: #1670a8;
-		font-family: sans-serif;
+		font-family: 'Montserrat', sans-serif;
 		font-size: .75rem;
+	}
+
+	@media (max-width: 760px) {
+		.owners-grid {
+			grid-template-columns: 1fr;
+		}
 	}
 
 	@media (max-width: 600px) {
@@ -206,30 +273,25 @@
 			inset: 12% 2% 5%;
 		}
 
-		.desktop-break {
-			display: none;
-		}
-
 		.gift-message {
 			font-size: 1.3rem;
 		}
 
-		.account-list {
-			grid-template-columns: 1fr;
-			gap: .75rem;
-		}
-
-		.account-card {
+		.owner-card {
 			padding: 1rem;
 		}
 
-		.account-number {
-			font-size: .78rem;
-			letter-spacing: .045em;
+		.account-number-value {
+			font-size: .95rem;
 		}
 	}
 
 	@media (prefers-reduced-motion: reduce) {
+		.gift-wash,
+		.account-row {
+			transition: none;
+		}
+
 		.gift-wash {
 			transform: none;
 		}

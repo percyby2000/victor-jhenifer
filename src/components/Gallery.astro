@@ -1,0 +1,339 @@
+---
+import { Image } from 'astro:assets';
+
+interface CoverflowImage {
+	src: ImageMetadata;
+	alt: string;
+	hasVideo?: boolean;
+}
+
+interface Props {
+	images: CoverflowImage[];
+}
+
+const { images } = Astro.props;
+
+const initialPosition = (index: number) => {
+	if (index === 0) return 'position-0';
+	if (index === 1) return 'position1';
+	if (index === 2) return 'position2';
+	return 'position-away';
+};
+
+const total = images.length;
+---
+
+<section class="coverflow-gallery" aria-labelledby="gallery-title">
+	<div class="gallery-heading">
+		<p>Recuerdos para guardar</p>
+		<h2 id="gallery-title">Galer&iacute;a</h2>
+	</div>
+
+	<div class="coverflow-viewport" data-coverflow>
+		{
+			images.map((image, index) => (
+				<figure
+					class:list={['coverflow-card', initialPosition(index)]}
+					data-index={index}
+					aria-hidden={index === 0 ? 'false' : 'true'}
+				>
+					<Image
+						src={image.src}
+						alt={image.alt}
+						widths={[240, 320, 480]}
+						sizes="(max-width: 767px) 48vw, (max-width: 1100px) 30vw, 18rem"
+						format="webp"
+						quality={82}
+						loading={index === 0 ? 'eager' : 'lazy'}
+						fetchpriority={index === 0 ? 'high' : undefined}
+					/>
+					<div class="coverflow-shade" aria-hidden="true"></div>
+					{image.hasVideo && (
+						<button class="play-button" type="button" aria-label={`Reproducir ${image.alt}`}>
+							<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+						</button>
+					)}
+				</figure>
+			))
+		}
+	</div>
+
+	<div class="coverflow-controls">
+		<button class="nav-button" type="button" data-prev aria-label="Anterior">&larr;</button>
+		<span class="counter" data-counter>1 / {total}</span>
+		<button class="nav-button" type="button" data-next aria-label="Siguiente">&rarr;</button>
+	</div>
+</section>
+
+<script>
+	const coverflow = document.querySelector<HTMLElement>('.coverflow-gallery');
+	const viewport = coverflow?.querySelector<HTMLElement>('.coverflow-viewport');
+	const cards = viewport ? Array.from(viewport.querySelectorAll<HTMLElement>('.coverflow-card')) : [];
+	const prevButton = coverflow?.querySelector<HTMLButtonElement>('[data-prev]');
+	const nextButton = coverflow?.querySelector<HTMLButtonElement>('[data-next]');
+	const counter = coverflow?.querySelector<HTMLElement>('[data-counter]');
+
+	const positionClasses = ['position-2', 'position-1', 'position-0', 'position1', 'position2'];
+	let currentIndex = 0;
+
+	const forceEager = (card: HTMLElement | undefined) => {
+		const img = card?.querySelector<HTMLImageElement>('img');
+		if (!img) return;
+		if (img.loading !== 'eager') img.loading = 'eager';
+		img.fetchPriority = 'high';
+	};
+
+	const render = () => {
+		if (!cards.length) return;
+
+		cards.forEach((card, index) => {
+			const offset = index - currentIndex;
+			const isVisible = Math.abs(offset) <= 2;
+
+			card.classList.remove(...positionClasses, 'position-away');
+
+			if (isVisible) {
+				card.classList.add(offset < 0 ? `position-${Math.abs(offset)}` : `position${offset}`);
+			} else {
+				card.classList.add('position-away');
+			}
+
+			card.setAttribute('aria-hidden', offset === 0 ? 'false' : 'true');
+		});
+
+		forceEager(cards[currentIndex]);
+
+		if (counter) counter.textContent = `${currentIndex + 1} / ${cards.length}`;
+	};
+
+	prevButton?.addEventListener('click', () => {
+		currentIndex = (currentIndex - 1 + cards.length) % cards.length;
+		render();
+	});
+
+	nextButton?.addEventListener('click', () => {
+		currentIndex = (currentIndex + 1) % cards.length;
+		render();
+	});
+
+	cards.forEach((card) => {
+		card.addEventListener('click', () => {
+			const index = Number(card.dataset.index);
+			if (!Number.isNaN(index) && index !== currentIndex) {
+				currentIndex = index;
+				render();
+			}
+		});
+	});
+
+	render();
+</script>
+
+<style>
+	.coverflow-gallery {
+		box-sizing: border-box;
+		overflow: hidden;
+		padding: clamp(4rem, 9vw, 6.5rem) 1rem;
+		background: #ffffff;
+		color: #04294A;
+		text-align: center;
+	}
+
+	.gallery-heading {
+		margin-bottom: clamp(1.5rem, 5vw, 2.75rem);
+	}
+
+	.gallery-heading p {
+		margin: 0 0 .35rem;
+		color: #376282;
+		font-family: var(--font-subtitulos);
+		font-size: .72rem;
+		font-weight: 300;
+		letter-spacing: .18em;
+		text-transform: uppercase;
+	}
+
+	.gallery-heading h2 {
+		margin: 0;
+		color: #04294A;
+		font-family: var(--font-titulos);
+		font-size: clamp(2.4rem, 6vw, 4.2rem);
+		font-weight: 500;
+		letter-spacing: .01em;
+	}
+
+	.coverflow-viewport {
+		position: relative;
+		height: clamp(20rem, 52vh, 30rem);
+		overflow: hidden;
+	}
+
+	.coverflow-card {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: clamp(10rem, 30vw, 18rem);
+		aspect-ratio: 2 / 3;
+		margin: 0;
+		overflow: hidden;
+		border-radius: 1rem;
+		background: #123047;
+		box-shadow: 0 1.2rem 2.6rem rgba(4, 41, 74, .22);
+		transform: translate(-50%, -50%) rotate(0deg) scale(.6);
+		opacity: 0;
+		cursor: pointer;
+		will-change: transform, opacity;
+		transition: transform .5s ease, opacity .5s ease;
+	}
+
+	.coverflow-card img {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.coverflow-shade {
+		position: absolute;
+		inset: 0;
+		background: rgba(4, 41, 74, .4);
+		opacity: 0;
+		transition: opacity .5s ease;
+	}
+
+	.coverflow-card.position-2 {
+		transform: translate(calc(-50% - 118%), -50%) rotate(-14deg) scale(.6);
+		z-index: 4;
+		opacity: .65;
+	}
+
+	.coverflow-card.position-1 {
+		transform: translate(calc(-50% - 58%), -50%) rotate(-9deg) scale(.82);
+		z-index: 5;
+		opacity: .9;
+	}
+
+	.coverflow-card.position-0 {
+		transform: translate(-50%, -50%) rotate(0deg) scale(1);
+		z-index: 6;
+		opacity: 1;
+		box-shadow: 0 2rem 4rem rgba(4, 41, 74, .32);
+	}
+
+	.coverflow-card.position1 {
+		transform: translate(calc(-50% + 58%), -50%) rotate(9deg) scale(.82);
+		z-index: 5;
+		opacity: .9;
+	}
+
+	.coverflow-card.position2 {
+		transform: translate(calc(-50% + 118%), -50%) rotate(14deg) scale(.6);
+		z-index: 4;
+		opacity: .65;
+	}
+
+	.coverflow-card:not(.position-0) .coverflow-shade {
+		opacity: 1;
+	}
+
+	.coverflow-card.position-away {
+		opacity: 0;
+		pointer-events: none;
+		z-index: 0;
+	}
+
+	.coverflow-card:focus-visible {
+		outline: 2px solid #376282;
+		outline-offset: 3px;
+	}
+
+	.play-button {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		display: grid;
+		width: 3.2rem;
+		height: 3.2rem;
+		place-items: center;
+		border: 1px solid rgba(255, 255, 255, .6);
+		border-radius: 50%;
+		background: rgba(255, 255, 255, .4);
+		backdrop-filter: blur(4px);
+		color: #ffffff;
+		box-shadow: 0 .5rem 1.2rem rgba(4, 41, 74, .28);
+		transform: translate(-50%, -50%);
+		transition: opacity .5s ease;
+		cursor: pointer;
+	}
+
+	.play-button svg {
+		width: 1.25rem;
+		height: 1.25rem;
+		margin-left: .15rem;
+		fill: currentColor;
+	}
+
+	.coverflow-controls {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 1.25rem;
+		margin-top: clamp(1rem, 3vw, 1.75rem);
+	}
+
+	.nav-button {
+		display: grid;
+		width: 2.9rem;
+		height: 2.9rem;
+		place-items: center;
+		border: 1px solid #376282;
+		border-radius: 50%;
+		background: transparent;
+		color: #376282;
+		font-size: 1.25rem;
+		cursor: pointer;
+		transition: background-color .25s ease, color .25s ease;
+	}
+
+	.nav-button:hover,
+	.nav-button:focus-visible {
+		background: #376282;
+		color: #ffffff;
+	}
+
+	.counter {
+		min-width: 3.5rem;
+		color: #376282;
+		font-family: var(--font-subtitulos);
+		font-size: .8rem;
+		font-weight: 500;
+		letter-spacing: .16em;
+		font-variant-numeric: tabular-nums;
+	}
+
+	@media (max-width: 767px) {
+		.coverflow-card.position-2,
+		.coverflow-card.position2 {
+			opacity: 0;
+			pointer-events: none;
+			z-index: 0;
+		}
+
+		.coverflow-viewport {
+			height: clamp(19rem, 50vh, 26rem);
+		}
+
+		.coverflow-card {
+			width: clamp(10rem, 48vw, 15rem);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.coverflow-card,
+		.coverflow-shade,
+		.play-button,
+		.nav-button {
+			transition: none;
+		}
+	}
+</style>
